@@ -1,0 +1,21 @@
+/* Comment for translators: Title of the broadcast period section */
+"broadcast_period" = "放送時期：";
+
+/* Comment for translators: Format for the total number of episodes, %@ is replaced by the number */
+"episodes_total" = "全%@話";
+
+/* Comment for translators: Season names */
+"season_spring" = "春";
+"season_summer" = "夏";
+"season_fall" = "秋";
+"season_winter" = "冬";
+
+/* Comment for translators: Title for the status selection screen */
+"status_select" = "ステータスを選択";
+
+/* Comment for translators: Button label for cancel actions */
+"cancel" = "キャンセル";
+
+/* Additional strings */
+...
+

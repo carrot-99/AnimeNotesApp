@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDX--93sU06Uv5ZZ2sIIc5M6oEBW1NYOYE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>341618217349</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.carrot.AnimeNotesApp</string>
+	<key>PROJECT_ID</key>
+	<string>animenotesapp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>animenotesapp.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:341618217349:ios:9720758c8dbd06d87db4ec</string>
+</dict>
+</plist>

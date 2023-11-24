@@ -1,0 +1,1177 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2B49414DAC73E4EF4D7AF3E2 /* Pods_AnimeNotesApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B96C4EBE5A8A28AB5E45074 /* Pods_AnimeNotesApp.framework */; };
+		522AD5D17EC4F9A6FAB6E61A /* Pods_AnimeNotesAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D59BAEFFC2F6F0A33659446F /* Pods_AnimeNotesAppTests.framework */; };
+		B50AA492B78871CB2BAB7772 /* Pods_AnimeNotesApp_AnimeNotesAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAACD9D3F064DB87E35FBB4 /* Pods_AnimeNotesApp_AnimeNotesAppUITests.framework */; };
+		CE6C086C2AF4DFFE0036310C /* AnimeNotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C086B2AF4DFFE0036310C /* AnimeNotesApp.swift */; };
+		CE6C08702AF4DFFF0036310C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE6C086F2AF4DFFF0036310C /* Assets.xcassets */; };
+		CE6C08732AF4DFFF0036310C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE6C08722AF4DFFF0036310C /* Preview Assets.xcassets */; };
+		CE6C087D2AF4DFFF0036310C /* AnimeNotesAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C087C2AF4DFFF0036310C /* AnimeNotesAppTests.swift */; };
+		CE6C08872AF4DFFF0036310C /* AnimeNotesAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C08862AF4DFFF0036310C /* AnimeNotesAppUITests.swift */; };
+		CE6C08892AF4DFFF0036310C /* AnimeNotesAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C08882AF4DFFF0036310C /* AnimeNotesAppUITestsLaunchTests.swift */; };
+		CE6F0A0C2B066120000F681D /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A0B2B066120000F681D /* AppError.swift */; };
+		CE6F0A0E2B066212000F681D /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A0D2B066212000F681D /* FirestoreService.swift */; };
+		CE6F0A102B06669E000F681D /* FirestoreServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A0F2B06669E000F681D /* FirestoreServiceProtocol.swift */; };
+		CE6F0A132B06673B000F681D /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A122B06673B000F681D /* AuthenticationService.swift */; };
+		CE6F0A162B06683D000F681D /* AnimeDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A152B06683D000F681D /* AnimeDataService.swift */; };
+		CE6F0A182B06694F000F681D /* EpisodeDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A172B06694F000F681D /* EpisodeDataService.swift */; };
+		CE6F0A1A2B085C39000F681D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A192B085C39000F681D /* ContentView.swift */; };
+		CE6F0A1C2B09D4B6000F681D /* AnyEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A1B2B09D4B6000F681D /* AnyEncodable.swift */; };
+		CE6F0A1E2B0D9FE5000F681D /* AnimeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A1D2B0D9FE5000F681D /* AnimeService.swift */; };
+		CE6F0A202B103146000F681D /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A1F2B103146000F681D /* SearchBarView.swift */; };
+		CE6F0A222B103172000F681D /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A212B103172000F681D /* SearchResultsView.swift */; };
+		CE8EC16C2AFF4F3E003F6BDF /* StatusSelectionModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC16B2AFF4F3E003F6BDF /* StatusSelectionModalView.swift */; };
+		CE8EC16E2AFF9597003F6BDF /* AnimeDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC16D2AFF9597003F6BDF /* AnimeDetailViewModel.swift */; };
+		CE8EC1702B00B2A9003F6BDF /* SeasonUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC16F2B00B2A9003F6BDF /* SeasonUtility.swift */; };
+		CE8EC1742B034F52003F6BDF /* StatusIconMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC1732B034F52003F6BDF /* StatusIconMapping.swift */; };
+		CE8EC1762B036153003F6BDF /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC1752B036153003F6BDF /* SearchView.swift */; };
+		CE8EC17A2B036439003F6BDF /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC1792B036439003F6BDF /* SearchViewModel.swift */; };
+		CE8EC17C2B0374E6003F6BDF /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC17B2B0374E6003F6BDF /* HomeViewModel.swift */; };
+		CE8EC17E2B0468FB003F6BDF /* StatusAnimeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC17D2B0468FB003F6BDF /* StatusAnimeListView.swift */; };
+		CE8EC1802B0469AD003F6BDF /* StatusAnimeListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC17F2B0469AD003F6BDF /* StatusAnimeListViewModel.swift */; };
+		CE8EC1852B04B51A003F6BDF /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC1842B04B51A003F6BDF /* CustomTextField.swift */; };
+		CE8EC1882B04B56B003F6BDF /* DismissKeyboardModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC1872B04B56B003F6BDF /* DismissKeyboardModifier.swift */; };
+		CE8EC18C2B04BA58003F6BDF /* UserSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC18B2B04BA58003F6BDF /* UserSessionViewModel.swift */; };
+		CE8EC18E2B04BBE5003F6BDF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC18D2B04BBE5003F6BDF /* AppDelegate.swift */; };
+		CE8FCBFC2AFB88210097D96B /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8FCBFB2AFB88210097D96B /* MainTabView.swift */; };
+		CE8FCBFE2AFB89830097D96B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8FCBFD2AFB89830097D96B /* HomeView.swift */; };
+		CE8FCC002AFB8B380097D96B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8FCBFF2AFB8B380097D96B /* SettingsView.swift */; };
+		CECF9E6B2B06411B000A5199 /* StatusCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECF9E6A2B06411B000A5199 /* StatusCountView.swift */; };
+		CECF9E6D2B0648D1000A5199 /* AuthenticationServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECF9E6C2B0648D1000A5199 /* AuthenticationServiceProtocol.swift */; };
+		CEE07A6D2AF4F4B1005F1977 /* AnimeListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE07A6C2AF4F4B1005F1977 /* AnimeListViewModel.swift */; };
+		CEE200EA2AF63E52002BEE6E /* SeasonListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE200E92AF63E52002BEE6E /* SeasonListViewModel.swift */; };
+		CEE200EC2AF63E7D002BEE6E /* SeasonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE200EB2AF63E7D002BEE6E /* SeasonListView.swift */; };
+		CEEAAFB22B05B7290023A896 /* SeasonListNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFB12B05B7290023A896 /* SeasonListNavigation.swift */; };
+		CEEAAFB42B05DE450023A896 /* UserAnime.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFB32B05DE450023A896 /* UserAnime.swift */; };
+		CEEAAFB62B05DE7A0023A896 /* UserEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFB52B05DE7A0023A896 /* UserEpisode.swift */; };
+		CEEAAFB82B060CB70023A896 /* IdentifiableError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFB72B060CB70023A896 /* IdentifiableError.swift */; };
+		CEEAAFBE2B0612890023A896 /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFBD2B0612890023A896 /* BaseViewModel.swift */; };
+		CEEAAFC02B0614B40023A896 /* AnimeDataServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFBF2B0614B40023A896 /* AnimeDataServiceProtocol.swift */; };
+		CEEAAFC52B06303B0023A896 /* Localizable.strings (Base) in Resources */ = {isa = PBXBuildFile; fileRef = CEEAAFC42B06303B0023A896 /* Localizable.strings (Base) */; };
+		CEEAAFC92B0633040023A896 /* EpisodeRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFC82B0633040023A896 /* EpisodeRepositoryProtocol.swift */; };
+		CEF704222AF7627C00FD83DF /* FirebaseFirestore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEF704212AF7627C00FD83DF /* FirebaseFirestore.framework */; };
+		CEF704262AF76B2800FD83DF /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF704252AF76B2800FD83DF /* LoginView.swift */; };
+		CEF704282AF76F8C00FD83DF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEF704272AF76E8200FD83DF /* GoogleService-Info.plist */; };
+		CEF7042C2AF7757B00FD83DF /* CreateAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF7042B2AF7757B00FD83DF /* CreateAccountView.swift */; };
+		CEFFB67C2AF53FB4005A9932 /* AnimeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB67B2AF53FB4005A9932 /* AnimeModel.swift */; };
+		CEFFB67F2AF6244C005A9932 /* AnimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB67E2AF6244C005A9932 /* AnimeCell.swift */; };
+		CEFFB6822AF6252E005A9932 /* AnimeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB6812AF6252E005A9932 /* AnimeListView.swift */; };
+		CEFFB6842AF62598005A9932 /* AnimeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB6832AF62598005A9932 /* AnimeDetailView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CE6C08792AF4DFFF0036310C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE6C08602AF4DFFE0036310C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE6C08672AF4DFFE0036310C;
+			remoteInfo = AnimeNotesApp;
+		};
+		CE6C08832AF4DFFF0036310C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE6C08602AF4DFFE0036310C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE6C08672AF4DFFE0036310C;
+			remoteInfo = AnimeNotesApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0B96C4EBE5A8A28AB5E45074 /* Pods_AnimeNotesApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnimeNotesApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CAACD9D3F064DB87E35FBB4 /* Pods_AnimeNotesApp_AnimeNotesAppUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnimeNotesApp_AnimeNotesAppUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B9F9969A04E74D190649749 /* Pods-AnimeNotesApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesApp.debug.xcconfig"; path = "Target Support Files/Pods-AnimeNotesApp/Pods-AnimeNotesApp.debug.xcconfig"; sourceTree = "<group>"; };
+		785DB991886F8B02ECCCD8E8 /* Pods-AnimeNotesApp-AnimeNotesAppUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesApp-AnimeNotesAppUITests.release.xcconfig"; path = "Target Support Files/Pods-AnimeNotesApp-AnimeNotesAppUITests/Pods-AnimeNotesApp-AnimeNotesAppUITests.release.xcconfig"; sourceTree = "<group>"; };
+		85A85AE3EE0E141A6C93A063 /* Pods-AnimeNotesAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesAppTests.debug.xcconfig"; path = "Target Support Files/Pods-AnimeNotesAppTests/Pods-AnimeNotesAppTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B52DE1F81CE91A957F440AC8 /* Pods-AnimeNotesApp-AnimeNotesAppUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesApp-AnimeNotesAppUITests.debug.xcconfig"; path = "Target Support Files/Pods-AnimeNotesApp-AnimeNotesAppUITests/Pods-AnimeNotesApp-AnimeNotesAppUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		C86A89DB2E64F2B80FB6BBE6 /* Pods-AnimeNotesApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesApp.release.xcconfig"; path = "Target Support Files/Pods-AnimeNotesApp/Pods-AnimeNotesApp.release.xcconfig"; sourceTree = "<group>"; };
+		CE6C08682AF4DFFE0036310C /* AnimeNotesApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnimeNotesApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE6C086B2AF4DFFE0036310C /* AnimeNotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeNotesApp.swift; sourceTree = "<group>"; };
+		CE6C086F2AF4DFFF0036310C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CE6C08722AF4DFFF0036310C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		CE6C08782AF4DFFF0036310C /* AnimeNotesAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AnimeNotesAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE6C087C2AF4DFFF0036310C /* AnimeNotesAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeNotesAppTests.swift; sourceTree = "<group>"; };
+		CE6C08822AF4DFFF0036310C /* AnimeNotesAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AnimeNotesAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE6C08862AF4DFFF0036310C /* AnimeNotesAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeNotesAppUITests.swift; sourceTree = "<group>"; };
+		CE6C08882AF4DFFF0036310C /* AnimeNotesAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeNotesAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		CE6F0A0B2B066120000F681D /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
+		CE6F0A0D2B066212000F681D /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		CE6F0A0F2B06669E000F681D /* FirestoreServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreServiceProtocol.swift; sourceTree = "<group>"; };
+		CE6F0A122B06673B000F681D /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		CE6F0A152B06683D000F681D /* AnimeDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeDataService.swift; sourceTree = "<group>"; };
+		CE6F0A172B06694F000F681D /* EpisodeDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeDataService.swift; sourceTree = "<group>"; };
+		CE6F0A192B085C39000F681D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		CE6F0A1B2B09D4B6000F681D /* AnyEncodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEncodable.swift; sourceTree = "<group>"; };
+		CE6F0A1D2B0D9FE5000F681D /* AnimeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeService.swift; sourceTree = "<group>"; };
+		CE6F0A1F2B103146000F681D /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
+		CE6F0A212B103172000F681D /* SearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
+		CE8EC16B2AFF4F3E003F6BDF /* StatusSelectionModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusSelectionModalView.swift; sourceTree = "<group>"; };
+		CE8EC16D2AFF9597003F6BDF /* AnimeDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeDetailViewModel.swift; sourceTree = "<group>"; };
+		CE8EC16F2B00B2A9003F6BDF /* SeasonUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonUtility.swift; sourceTree = "<group>"; };
+		CE8EC1732B034F52003F6BDF /* StatusIconMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusIconMapping.swift; sourceTree = "<group>"; };
+		CE8EC1752B036153003F6BDF /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		CE8EC1792B036439003F6BDF /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		CE8EC17B2B0374E6003F6BDF /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		CE8EC17D2B0468FB003F6BDF /* StatusAnimeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusAnimeListView.swift; sourceTree = "<group>"; };
+		CE8EC17F2B0469AD003F6BDF /* StatusAnimeListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusAnimeListViewModel.swift; sourceTree = "<group>"; };
+		CE8EC1842B04B51A003F6BDF /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
+		CE8EC1872B04B56B003F6BDF /* DismissKeyboardModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissKeyboardModifier.swift; sourceTree = "<group>"; };
+		CE8EC18B2B04BA58003F6BDF /* UserSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSessionViewModel.swift; sourceTree = "<group>"; };
+		CE8EC18D2B04BBE5003F6BDF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CE8FCBFB2AFB88210097D96B /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		CE8FCBFD2AFB89830097D96B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		CE8FCBFF2AFB8B380097D96B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		CECF9E6A2B06411B000A5199 /* StatusCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusCountView.swift; sourceTree = "<group>"; };
+		CECF9E6C2B0648D1000A5199 /* AuthenticationServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationServiceProtocol.swift; sourceTree = "<group>"; };
+		CEE07A6C2AF4F4B1005F1977 /* AnimeListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeListViewModel.swift; sourceTree = "<group>"; };
+		CEE200E92AF63E52002BEE6E /* SeasonListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonListViewModel.swift; sourceTree = "<group>"; };
+		CEE200EB2AF63E7D002BEE6E /* SeasonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonListView.swift; sourceTree = "<group>"; };
+		CEEAAFB12B05B7290023A896 /* SeasonListNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonListNavigation.swift; sourceTree = "<group>"; };
+		CEEAAFB32B05DE450023A896 /* UserAnime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAnime.swift; sourceTree = "<group>"; };
+		CEEAAFB52B05DE7A0023A896 /* UserEpisode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEpisode.swift; sourceTree = "<group>"; };
+		CEEAAFB72B060CB70023A896 /* IdentifiableError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiableError.swift; sourceTree = "<group>"; };
+		CEEAAFBD2B0612890023A896 /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
+		CEEAAFBF2B0614B40023A896 /* AnimeDataServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeDataServiceProtocol.swift; sourceTree = "<group>"; };
+		CEEAAFC42B06303B0023A896 /* Localizable.strings (Base) */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Localizable.strings (Base)"; sourceTree = "<group>"; };
+		CEEAAFC82B0633040023A896 /* EpisodeRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeRepositoryProtocol.swift; sourceTree = "<group>"; };
+		CEF7041D2AF761CE00FD83DF /* FirebaseFirestore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseFirestore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEF7041F2AF7624300FD83DF /* FirebaseFirestoreInternal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseFirestoreInternal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEF704212AF7627C00FD83DF /* FirebaseFirestore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseFirestore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEF704252AF76B2800FD83DF /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		CEF704272AF76E8200FD83DF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "/Users/user/Desktop/dev/swift/AnimeNotesApp/AnimeNotesApp/GoogleService-Info.plist"; sourceTree = "<absolute>"; };
+		CEF7042B2AF7757B00FD83DF /* CreateAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountView.swift; sourceTree = "<group>"; };
+		CEFFB67B2AF53FB4005A9932 /* AnimeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeModel.swift; sourceTree = "<group>"; };
+		CEFFB67E2AF6244C005A9932 /* AnimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeCell.swift; sourceTree = "<group>"; };
+		CEFFB6812AF6252E005A9932 /* AnimeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeListView.swift; sourceTree = "<group>"; };
+		CEFFB6832AF62598005A9932 /* AnimeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeDetailView.swift; sourceTree = "<group>"; };
+		D59BAEFFC2F6F0A33659446F /* Pods_AnimeNotesAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnimeNotesAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCDAA717219051E274B93EBE /* Pods-AnimeNotesAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesAppTests.release.xcconfig"; path = "Target Support Files/Pods-AnimeNotesAppTests/Pods-AnimeNotesAppTests.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CE6C08652AF4DFFE0036310C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEF704222AF7627C00FD83DF /* FirebaseFirestore.framework in Frameworks */,
+				2B49414DAC73E4EF4D7AF3E2 /* Pods_AnimeNotesApp.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE6C08752AF4DFFF0036310C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				522AD5D17EC4F9A6FAB6E61A /* Pods_AnimeNotesAppTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE6C087F2AF4DFFF0036310C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B50AA492B78871CB2BAB7772 /* Pods_AnimeNotesApp_AnimeNotesAppUITests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A68E934F1F1BD45A26B44864 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6B9F9969A04E74D190649749 /* Pods-AnimeNotesApp.debug.xcconfig */,
+				C86A89DB2E64F2B80FB6BBE6 /* Pods-AnimeNotesApp.release.xcconfig */,
+				B52DE1F81CE91A957F440AC8 /* Pods-AnimeNotesApp-AnimeNotesAppUITests.debug.xcconfig */,
+				785DB991886F8B02ECCCD8E8 /* Pods-AnimeNotesApp-AnimeNotesAppUITests.release.xcconfig */,
+				85A85AE3EE0E141A6C93A063 /* Pods-AnimeNotesAppTests.debug.xcconfig */,
+				DCDAA717219051E274B93EBE /* Pods-AnimeNotesAppTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		C5449E7E6B2571D982421D4F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CEF704212AF7627C00FD83DF /* FirebaseFirestore.framework */,
+				CEF7041F2AF7624300FD83DF /* FirebaseFirestoreInternal.framework */,
+				CEF7041D2AF761CE00FD83DF /* FirebaseFirestore.framework */,
+				0B96C4EBE5A8A28AB5E45074 /* Pods_AnimeNotesApp.framework */,
+				4CAACD9D3F064DB87E35FBB4 /* Pods_AnimeNotesApp_AnimeNotesAppUITests.framework */,
+				D59BAEFFC2F6F0A33659446F /* Pods_AnimeNotesAppTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CE6C085F2AF4DFFE0036310C = {
+			isa = PBXGroup;
+			children = (
+				CE6C086A2AF4DFFE0036310C /* AnimeNotesApp */,
+				CE6C087B2AF4DFFF0036310C /* AnimeNotesAppTests */,
+				CE6C08852AF4DFFF0036310C /* AnimeNotesAppUITests */,
+				CE6C08692AF4DFFE0036310C /* Products */,
+				A68E934F1F1BD45A26B44864 /* Pods */,
+				C5449E7E6B2571D982421D4F /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CE6C08692AF4DFFE0036310C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CE6C08682AF4DFFE0036310C /* AnimeNotesApp.app */,
+				CE6C08782AF4DFFF0036310C /* AnimeNotesAppTests.xctest */,
+				CE6C08822AF4DFFF0036310C /* AnimeNotesAppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CE6C086A2AF4DFFE0036310C /* AnimeNotesApp */ = {
+			isa = PBXGroup;
+			children = (
+				CEF704272AF76E8200FD83DF /* GoogleService-Info.plist */,
+				CE6C086B2AF4DFFE0036310C /* AnimeNotesApp.swift */,
+				CE8EC18D2B04BBE5003F6BDF /* AppDelegate.swift */,
+				CEFFB67D2AF6242F005A9932 /* Components */,
+				CE6C08992AF4E61E0036310C /* Models */,
+				CEE07A5E2AF4EB55005F1977 /* Services */,
+				CE6C089A2AF4E64E0036310C /* ViewModels */,
+				CEFDFB192AF4E70700FA67CB /* Views */,
+				CE8EC1812B04B0C1003F6BDF /* Protocols */,
+				CEE07A602AF4EB73005F1977 /* Resources */,
+				CEE07A5F2AF4EB67005F1977 /* Utilities */,
+				CE8F061B2AF4EA7A0026BCF9 /* Controllers */,
+				CE6C08712AF4DFFF0036310C /* Preview Content */,
+				CEE07A612AF4EB80005F1977 /* SupportingFiles */,
+			);
+			path = AnimeNotesApp;
+			sourceTree = "<group>";
+		};
+		CE6C08712AF4DFFF0036310C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				CE6C08722AF4DFFF0036310C /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		CE6C087B2AF4DFFF0036310C /* AnimeNotesAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				CE6C087C2AF4DFFF0036310C /* AnimeNotesAppTests.swift */,
+			);
+			path = AnimeNotesAppTests;
+			sourceTree = "<group>";
+		};
+		CE6C08852AF4DFFF0036310C /* AnimeNotesAppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				CE6C08862AF4DFFF0036310C /* AnimeNotesAppUITests.swift */,
+				CE6C08882AF4DFFF0036310C /* AnimeNotesAppUITestsLaunchTests.swift */,
+			);
+			path = AnimeNotesAppUITests;
+			sourceTree = "<group>";
+		};
+		CE6C08992AF4E61E0036310C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CE6F0A072B065F48000F681D /* AnimeRelated */,
+				CE6F0A082B065F67000F681D /* ErrorModels */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CE6C089A2AF4E64E0036310C /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CE8EC18B2B04BA58003F6BDF /* UserSessionViewModel.swift */,
+				CEEAAFBD2B0612890023A896 /* BaseViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CE6F0A022B065EAD000F681D /* Inputs */ = {
+			isa = PBXGroup;
+			children = (
+				CE8EC1842B04B51A003F6BDF /* CustomTextField.swift */,
+			);
+			path = Inputs;
+			sourceTree = "<group>";
+		};
+		CE6F0A032B065EBD000F681D /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				CEFFB67E2AF6244C005A9932 /* AnimeCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		CE6F0A042B065EC8000F681D /* Modals */ = {
+			isa = PBXGroup;
+			children = (
+				CE8EC16B2AFF4F3E003F6BDF /* StatusSelectionModalView.swift */,
+			);
+			path = Modals;
+			sourceTree = "<group>";
+		};
+		CE6F0A052B065ED4000F681D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CECF9E6A2B06411B000A5199 /* StatusCountView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CE6F0A062B065EE0000F681D /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CE8EC1732B034F52003F6BDF /* StatusIconMapping.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		CE6F0A072B065F48000F681D /* AnimeRelated */ = {
+			isa = PBXGroup;
+			children = (
+				CEFFB67B2AF53FB4005A9932 /* AnimeModel.swift */,
+				CEEAAFB32B05DE450023A896 /* UserAnime.swift */,
+				CEEAAFB52B05DE7A0023A896 /* UserEpisode.swift */,
+			);
+			path = AnimeRelated;
+			sourceTree = "<group>";
+		};
+		CE6F0A082B065F67000F681D /* ErrorModels */ = {
+			isa = PBXGroup;
+			children = (
+				CEEAAFB72B060CB70023A896 /* IdentifiableError.swift */,
+			);
+			path = ErrorModels;
+			sourceTree = "<group>";
+		};
+		CE6F0A112B066711000F681D /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				CE6F0A122B06673B000F681D /* AuthenticationService.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		CE6F0A142B066825000F681D /* DataAccess */ = {
+			isa = PBXGroup;
+			children = (
+				CE6F0A152B06683D000F681D /* AnimeDataService.swift */,
+				CE6F0A172B06694F000F681D /* EpisodeDataService.swift */,
+				CE6F0A1D2B0D9FE5000F681D /* AnimeService.swift */,
+			);
+			path = DataAccess;
+			sourceTree = "<group>";
+		};
+		CE8EC1812B04B0C1003F6BDF /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				CEEAAFBF2B0614B40023A896 /* AnimeDataServiceProtocol.swift */,
+				CEEAAFC82B0633040023A896 /* EpisodeRepositoryProtocol.swift */,
+				CECF9E6C2B0648D1000A5199 /* AuthenticationServiceProtocol.swift */,
+				CE6F0A0F2B06669E000F681D /* FirestoreServiceProtocol.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		CE8EC1862B04B536003F6BDF /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				CE8EC1872B04B56B003F6BDF /* DismissKeyboardModifier.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		CE8EC18F2B04BCCE003F6BDF /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				CEF704252AF76B2800FD83DF /* LoginView.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		CE8EC1902B04BCE2003F6BDF /* CreateAccount */ = {
+			isa = PBXGroup;
+			children = (
+				CEF7042B2AF7757B00FD83DF /* CreateAccountView.swift */,
+			);
+			path = CreateAccount;
+			sourceTree = "<group>";
+		};
+		CE8EC1912B04BD0F003F6BDF /* SeasonList */ = {
+			isa = PBXGroup;
+			children = (
+				CEE200EB2AF63E7D002BEE6E /* SeasonListView.swift */,
+				CEE200E92AF63E52002BEE6E /* SeasonListViewModel.swift */,
+				CEEAAFB12B05B7290023A896 /* SeasonListNavigation.swift */,
+			);
+			path = SeasonList;
+			sourceTree = "<group>";
+		};
+		CE8EC1922B04BD42003F6BDF /* AnimeList */ = {
+			isa = PBXGroup;
+			children = (
+				CEFFB6812AF6252E005A9932 /* AnimeListView.swift */,
+				CEE07A6C2AF4F4B1005F1977 /* AnimeListViewModel.swift */,
+			);
+			path = AnimeList;
+			sourceTree = "<group>";
+		};
+		CE8EC1932B04BD5E003F6BDF /* AnimeDetail */ = {
+			isa = PBXGroup;
+			children = (
+				CEFFB6832AF62598005A9932 /* AnimeDetailView.swift */,
+				CE8EC16D2AFF9597003F6BDF /* AnimeDetailViewModel.swift */,
+			);
+			path = AnimeDetail;
+			sourceTree = "<group>";
+		};
+		CE8EC1942B04BD84003F6BDF /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				CE8FCBFD2AFB89830097D96B /* HomeView.swift */,
+				CE8EC17B2B0374E6003F6BDF /* HomeViewModel.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		CE8EC1952B04BDAD003F6BDF /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				CE8FCBFF2AFB8B380097D96B /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		CE8EC1962B04BDC5003F6BDF /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				CE8EC1752B036153003F6BDF /* SearchView.swift */,
+				CE6F0A1F2B103146000F681D /* SearchBarView.swift */,
+				CE6F0A212B103172000F681D /* SearchResultsView.swift */,
+				CE8EC1792B036439003F6BDF /* SearchViewModel.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		CE8EC1972B04BDE3003F6BDF /* StatusAnimeList */ = {
+			isa = PBXGroup;
+			children = (
+				CE8EC17D2B0468FB003F6BDF /* StatusAnimeListView.swift */,
+				CE8EC17F2B0469AD003F6BDF /* StatusAnimeListViewModel.swift */,
+			);
+			path = StatusAnimeList;
+			sourceTree = "<group>";
+		};
+		CE8F061B2AF4EA7A0026BCF9 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		CEE07A5E2AF4EB55005F1977 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				CE6F0A0D2B066212000F681D /* FirestoreService.swift */,
+				CE6F0A142B066825000F681D /* DataAccess */,
+				CE6F0A112B066711000F681D /* Authentication */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CEE07A5F2AF4EB67005F1977 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CE8EC16F2B00B2A9003F6BDF /* SeasonUtility.swift */,
+				CE6F0A0B2B066120000F681D /* AppError.swift */,
+				CE6F0A1B2B09D4B6000F681D /* AnyEncodable.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		CEE07A602AF4EB73005F1977 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CE6C086F2AF4DFFF0036310C /* Assets.xcassets */,
+				CEEAAFC42B06303B0023A896 /* Localizable.strings (Base) */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		CEE07A612AF4EB80005F1977 /* SupportingFiles */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		CEFDFB192AF4E70700FA67CB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CE8FCBFB2AFB88210097D96B /* MainTabView.swift */,
+				CE6F0A192B085C39000F681D /* ContentView.swift */,
+				CE8EC18F2B04BCCE003F6BDF /* Login */,
+				CE8EC1902B04BCE2003F6BDF /* CreateAccount */,
+				CE8EC1912B04BD0F003F6BDF /* SeasonList */,
+				CE8EC1922B04BD42003F6BDF /* AnimeList */,
+				CE8EC1932B04BD5E003F6BDF /* AnimeDetail */,
+				CE8EC1962B04BDC5003F6BDF /* Search */,
+				CE8EC1942B04BD84003F6BDF /* Home */,
+				CE8EC1972B04BDE3003F6BDF /* StatusAnimeList */,
+				CE8EC1952B04BDAD003F6BDF /* Settings */,
+				CE8EC1862B04B536003F6BDF /* Modifiers */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CEFFB67D2AF6242F005A9932 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				CE6F0A062B065EE0000F681D /* Utilities */,
+				CE6F0A052B065ED4000F681D /* Views */,
+				CE6F0A042B065EC8000F681D /* Modals */,
+				CE6F0A032B065EBD000F681D /* Cells */,
+				CE6F0A022B065EAD000F681D /* Inputs */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CE6C08672AF4DFFE0036310C /* AnimeNotesApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE6C088C2AF4DFFF0036310C /* Build configuration list for PBXNativeTarget "AnimeNotesApp" */;
+			buildPhases = (
+				51176CE57FC8A43813C94D50 /* [CP] Check Pods Manifest.lock */,
+				CE6C08642AF4DFFE0036310C /* Sources */,
+				CE6C08652AF4DFFE0036310C /* Frameworks */,
+				CE6C08662AF4DFFE0036310C /* Resources */,
+				7B8F4D8CB2255A6EAC361732 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AnimeNotesApp;
+			packageProductDependencies = (
+			);
+			productName = AnimeNotesApp;
+			productReference = CE6C08682AF4DFFE0036310C /* AnimeNotesApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CE6C08772AF4DFFF0036310C /* AnimeNotesAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE6C088F2AF4DFFF0036310C /* Build configuration list for PBXNativeTarget "AnimeNotesAppTests" */;
+			buildPhases = (
+				C5663201D498F900CD101999 /* [CP] Check Pods Manifest.lock */,
+				CE6C08742AF4DFFF0036310C /* Sources */,
+				CE6C08752AF4DFFF0036310C /* Frameworks */,
+				CE6C08762AF4DFFF0036310C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CE6C087A2AF4DFFF0036310C /* PBXTargetDependency */,
+			);
+			name = AnimeNotesAppTests;
+			productName = AnimeNotesAppTests;
+			productReference = CE6C08782AF4DFFF0036310C /* AnimeNotesAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CE6C08812AF4DFFF0036310C /* AnimeNotesAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE6C08922AF4DFFF0036310C /* Build configuration list for PBXNativeTarget "AnimeNotesAppUITests" */;
+			buildPhases = (
+				7FEEA93B1F30D69612D922C3 /* [CP] Check Pods Manifest.lock */,
+				CE6C087E2AF4DFFF0036310C /* Sources */,
+				CE6C087F2AF4DFFF0036310C /* Frameworks */,
+				CE6C08802AF4DFFF0036310C /* Resources */,
+				DF08BF3FF12FA2094D3108B3 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CE6C08842AF4DFFF0036310C /* PBXTargetDependency */,
+			);
+			name = AnimeNotesAppUITests;
+			productName = AnimeNotesAppUITests;
+			productReference = CE6C08822AF4DFFF0036310C /* AnimeNotesAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CE6C08602AF4DFFE0036310C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					CE6C08672AF4DFFE0036310C = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+					CE6C08772AF4DFFF0036310C = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = CE6C08672AF4DFFE0036310C;
+					};
+					CE6C08812AF4DFFF0036310C = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = CE6C08672AF4DFFE0036310C;
+					};
+				};
+			};
+			buildConfigurationList = CE6C08632AF4DFFE0036310C /* Build configuration list for PBXProject "AnimeNotesApp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CE6C085F2AF4DFFE0036310C;
+			packageReferences = (
+			);
+			productRefGroup = CE6C08692AF4DFFE0036310C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CE6C08672AF4DFFE0036310C /* AnimeNotesApp */,
+				CE6C08772AF4DFFF0036310C /* AnimeNotesAppTests */,
+				CE6C08812AF4DFFF0036310C /* AnimeNotesAppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CE6C08662AF4DFFE0036310C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEEAAFC52B06303B0023A896 /* Localizable.strings (Base) in Resources */,
+				CEF704282AF76F8C00FD83DF /* GoogleService-Info.plist in Resources */,
+				CE6C08732AF4DFFF0036310C /* Preview Assets.xcassets in Resources */,
+				CE6C08702AF4DFFF0036310C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE6C08762AF4DFFF0036310C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE6C08802AF4DFFF0036310C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		51176CE57FC8A43813C94D50 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AnimeNotesApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7B8F4D8CB2255A6EAC361732 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AnimeNotesApp/Pods-AnimeNotesApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AnimeNotesApp/Pods-AnimeNotesApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AnimeNotesApp/Pods-AnimeNotesApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7FEEA93B1F30D69612D922C3 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AnimeNotesApp-AnimeNotesAppUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C5663201D498F900CD101999 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AnimeNotesAppTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DF08BF3FF12FA2094D3108B3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AnimeNotesApp-AnimeNotesAppUITests/Pods-AnimeNotesApp-AnimeNotesAppUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AnimeNotesApp-AnimeNotesAppUITests/Pods-AnimeNotesApp-AnimeNotesAppUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AnimeNotesApp-AnimeNotesAppUITests/Pods-AnimeNotesApp-AnimeNotesAppUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CE6C08642AF4DFFE0036310C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE8EC1882B04B56B003F6BDF /* DismissKeyboardModifier.swift in Sources */,
+				CE8EC17A2B036439003F6BDF /* SearchViewModel.swift in Sources */,
+				CE6F0A1A2B085C39000F681D /* ContentView.swift in Sources */,
+				CE6F0A162B06683D000F681D /* AnimeDataService.swift in Sources */,
+				CE8FCC002AFB8B380097D96B /* SettingsView.swift in Sources */,
+				CE6F0A0E2B066212000F681D /* FirestoreService.swift in Sources */,
+				CE6C086C2AF4DFFE0036310C /* AnimeNotesApp.swift in Sources */,
+				CE8EC1702B00B2A9003F6BDF /* SeasonUtility.swift in Sources */,
+				CE8EC16C2AFF4F3E003F6BDF /* StatusSelectionModalView.swift in Sources */,
+				CE8EC17C2B0374E6003F6BDF /* HomeViewModel.swift in Sources */,
+				CE6F0A202B103146000F681D /* SearchBarView.swift in Sources */,
+				CEE200EA2AF63E52002BEE6E /* SeasonListViewModel.swift in Sources */,
+				CE8EC1852B04B51A003F6BDF /* CustomTextField.swift in Sources */,
+				CE6F0A222B103172000F681D /* SearchResultsView.swift in Sources */,
+				CEEAAFC02B0614B40023A896 /* AnimeDataServiceProtocol.swift in Sources */,
+				CEEAAFB22B05B7290023A896 /* SeasonListNavigation.swift in Sources */,
+				CE6F0A1C2B09D4B6000F681D /* AnyEncodable.swift in Sources */,
+				CE6F0A0C2B066120000F681D /* AppError.swift in Sources */,
+				CE8FCBFC2AFB88210097D96B /* MainTabView.swift in Sources */,
+				CE8EC17E2B0468FB003F6BDF /* StatusAnimeListView.swift in Sources */,
+				CECF9E6B2B06411B000A5199 /* StatusCountView.swift in Sources */,
+				CE8EC16E2AFF9597003F6BDF /* AnimeDetailViewModel.swift in Sources */,
+				CEEAAFB62B05DE7A0023A896 /* UserEpisode.swift in Sources */,
+				CEE200EC2AF63E7D002BEE6E /* SeasonListView.swift in Sources */,
+				CE8EC18C2B04BA58003F6BDF /* UserSessionViewModel.swift in Sources */,
+				CEEAAFB42B05DE450023A896 /* UserAnime.swift in Sources */,
+				CE6F0A1E2B0D9FE5000F681D /* AnimeService.swift in Sources */,
+				CE6F0A102B06669E000F681D /* FirestoreServiceProtocol.swift in Sources */,
+				CEEAAFC92B0633040023A896 /* EpisodeRepositoryProtocol.swift in Sources */,
+				CE8EC1762B036153003F6BDF /* SearchView.swift in Sources */,
+				CECF9E6D2B0648D1000A5199 /* AuthenticationServiceProtocol.swift in Sources */,
+				CEEAAFB82B060CB70023A896 /* IdentifiableError.swift in Sources */,
+				CE8EC1742B034F52003F6BDF /* StatusIconMapping.swift in Sources */,
+				CEF704262AF76B2800FD83DF /* LoginView.swift in Sources */,
+				CEE07A6D2AF4F4B1005F1977 /* AnimeListViewModel.swift in Sources */,
+				CEEAAFBE2B0612890023A896 /* BaseViewModel.swift in Sources */,
+				CE8EC18E2B04BBE5003F6BDF /* AppDelegate.swift in Sources */,
+				CEF7042C2AF7757B00FD83DF /* CreateAccountView.swift in Sources */,
+				CE8FCBFE2AFB89830097D96B /* HomeView.swift in Sources */,
+				CEFFB6822AF6252E005A9932 /* AnimeListView.swift in Sources */,
+				CEFFB6842AF62598005A9932 /* AnimeDetailView.swift in Sources */,
+				CEFFB67F2AF6244C005A9932 /* AnimeCell.swift in Sources */,
+				CE8EC1802B0469AD003F6BDF /* StatusAnimeListViewModel.swift in Sources */,
+				CEFFB67C2AF53FB4005A9932 /* AnimeModel.swift in Sources */,
+				CE6F0A132B06673B000F681D /* AuthenticationService.swift in Sources */,
+				CE6F0A182B06694F000F681D /* EpisodeDataService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE6C08742AF4DFFF0036310C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE6C087D2AF4DFFF0036310C /* AnimeNotesAppTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE6C087E2AF4DFFF0036310C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE6C08872AF4DFFF0036310C /* AnimeNotesAppUITests.swift in Sources */,
+				CE6C08892AF4DFFF0036310C /* AnimeNotesAppUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CE6C087A2AF4DFFF0036310C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CE6C08672AF4DFFE0036310C /* AnimeNotesApp */;
+			targetProxy = CE6C08792AF4DFFF0036310C /* PBXContainerItemProxy */;
+		};
+		CE6C08842AF4DFFF0036310C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CE6C08672AF4DFFE0036310C /* AnimeNotesApp */;
+			targetProxy = CE6C08832AF4DFFF0036310C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CE6C088A2AF4DFFF0036310C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CE6C088B2AF4DFFF0036310C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CE6C088D2AF4DFFF0036310C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6B9F9969A04E74D190649749 /* Pods-AnimeNotesApp.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"AnimeNotesApp/Preview Content\"";
+				DEVELOPMENT_TEAM = HXJLYHK5AY;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carrot.AnimeNotesApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CE6C088E2AF4DFFF0036310C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C86A89DB2E64F2B80FB6BBE6 /* Pods-AnimeNotesApp.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"AnimeNotesApp/Preview Content\"";
+				DEVELOPMENT_TEAM = HXJLYHK5AY;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carrot.AnimeNotesApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CE6C08902AF4DFFF0036310C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 85A85AE3EE0E141A6C93A063 /* Pods-AnimeNotesAppTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HXJLYHK5AY;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carrot.AnimeNotesAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AnimeNotesApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AnimeNotesApp";
+			};
+			name = Debug;
+		};
+		CE6C08912AF4DFFF0036310C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DCDAA717219051E274B93EBE /* Pods-AnimeNotesAppTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HXJLYHK5AY;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carrot.AnimeNotesAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AnimeNotesApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AnimeNotesApp";
+			};
+			name = Release;
+		};
+		CE6C08932AF4DFFF0036310C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B52DE1F81CE91A957F440AC8 /* Pods-AnimeNotesApp-AnimeNotesAppUITests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HXJLYHK5AY;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carrot.AnimeNotesAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AnimeNotesApp;
+			};
+			name = Debug;
+		};
+		CE6C08942AF4DFFF0036310C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 785DB991886F8B02ECCCD8E8 /* Pods-AnimeNotesApp-AnimeNotesAppUITests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HXJLYHK5AY;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carrot.AnimeNotesAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AnimeNotesApp;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CE6C08632AF4DFFE0036310C /* Build configuration list for PBXProject "AnimeNotesApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE6C088A2AF4DFFF0036310C /* Debug */,
+				CE6C088B2AF4DFFF0036310C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE6C088C2AF4DFFF0036310C /* Build configuration list for PBXNativeTarget "AnimeNotesApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE6C088D2AF4DFFF0036310C /* Debug */,
+				CE6C088E2AF4DFFF0036310C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE6C088F2AF4DFFF0036310C /* Build configuration list for PBXNativeTarget "AnimeNotesAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE6C08902AF4DFFF0036310C /* Debug */,
+				CE6C08912AF4DFFF0036310C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE6C08922AF4DFFF0036310C /* Build configuration list for PBXNativeTarget "AnimeNotesAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE6C08932AF4DFFF0036310C /* Debug */,
+				CE6C08942AF4DFFF0036310C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CE6C08602AF4DFFE0036310C /* Project object */;
+}
