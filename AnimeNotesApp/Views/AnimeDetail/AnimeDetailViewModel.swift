@@ -15,13 +15,11 @@ class AnimeDetailViewModel: ObservableObject {
 
     
     init(anime: UserAnime, episodeDataService: EpisodeDataServiceProtocol) {
-        print("AnimeDetailViewModel初期化中")
         self.episodeDataService = episodeDataService
         fetchEpisodes(for: anime)
     }
 
     func fetchEpisodes(for anime: UserAnime) {
-        print("AnimeDetailView:fetchEpisodes")
         isLoading = true
         
         episodeDataService.fetchEpisodes(for: anime.user_id, animeId: anime.anime_id)
@@ -34,11 +32,9 @@ class AnimeDetailViewModel: ObservableObject {
                     }
                 },
                 receiveValue: { [weak self] episodes in
-                    // エピソードが存在する場合
                     if !episodes.isEmpty {
                         self?.episodes = episodes.sorted(by: { $0.episode_num < $1.episode_num })
                     } else {
-                        // エピソードが存在しない場合、新たに作成
                         self?.createEpisodesIfNotExist(for: anime)
                     }
                 }
@@ -47,7 +43,6 @@ class AnimeDetailViewModel: ObservableObject {
     }
     
     private func createEpisodesIfNotExist(for anime: UserAnime) {
-        print("AnimeDetailView:createEpisodesIfNotExist")
         guard let episodesCount = anime.episodes, episodesCount > 0 else {
             return
         }
@@ -68,14 +63,12 @@ class AnimeDetailViewModel: ObservableObject {
     }
     
     func selectEpisode(_ episode: UserEpisode) {
-        print("AnimeDetailView:selectEpisode")
         self.selectedEpisode = episode
         self.showingStatusSelection = true
         self.selectedStatus = episode.status
     }
     
     func updateStatusForSelectedEpisode() {
-        print("AnimeDetailView:updateStatusForSelectedEpisode")
         guard let selectedEpisode = selectedEpisode else { return }
         episodeDataService.updateEpisodeStatus(userId: selectedEpisode.user_id, animeId: selectedEpisode.anime_id, episodeNum: selectedEpisode.episode_num, newStatus: selectedStatus)
             .receive(on: DispatchQueue.main)

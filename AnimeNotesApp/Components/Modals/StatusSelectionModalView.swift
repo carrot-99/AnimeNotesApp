@@ -10,7 +10,8 @@ struct StatusSelectionModalView: View {
         (0, "未視聴", "eye.slash"),
         (1, "視聴中", "play.circle"),
         (2, "視聴中断", "pause.circle"),
-        (3, "視聴済", "checkmark.circle")
+        (3, "視聴済", "checkmark.circle"),
+        (4, "視聴予定", "calendar.circle")
     ]
     
     var body: some View {
@@ -38,7 +39,6 @@ struct StatusSelectionModalView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("キャンセル") {
                         self.isPresented = false
-//                        self.updateStatus(self.selectedStatus)
                     }
                 }
             }

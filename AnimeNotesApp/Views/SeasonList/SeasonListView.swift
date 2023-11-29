@@ -12,7 +12,6 @@ struct SeasonListView: View {
                     seasonListVM.selectSeason(season)
                 }
             }
-//            .navigationBarTitle("クール選択", displayMode: .inline)
             .navigationTitle("クール選択")
             .alert(isPresented: $seasonListVM.hasError) {
                 Alert(

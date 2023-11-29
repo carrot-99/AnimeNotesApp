@@ -8,6 +8,7 @@ class HomeViewModel: ObservableObject {
     @Published var watchedAnimeCount = 0
     @Published var watchingAnimeCount = 0
     @Published var onHoldAnimeCount = 0
+    @Published var plannedAnimeCount = 0
     
     private var authService: AuthenticationService
     private var cancellables = Set<AnyCancellable>()
@@ -39,6 +40,7 @@ class HomeViewModel: ObservableObject {
                     self?.watchedAnimeCount = statusCounts.watched
                     self?.watchingAnimeCount = statusCounts.watching
                     self?.onHoldAnimeCount = statusCounts.onHold
+                    self?.plannedAnimeCount = statusCounts.planned
                 }
             )
             .store(in: &cancellables)
@@ -52,6 +54,8 @@ class HomeViewModel: ObservableObject {
             return watchingAnimeCount
         case .onHold:
             return onHoldAnimeCount
+        case .planned:
+            return plannedAnimeCount
         }
     }
     
@@ -70,12 +74,14 @@ struct StatusCounts {
     var watched: Int
     var watching: Int
     var onHold: Int
+    var planned: Int
 }
 
 enum UserAnimeStatus: Int, CaseIterable {
     case watched = 3
     case watching = 1
     case onHold = 2
+    case planned = 4
     
     var description: String {
         switch self {
@@ -85,6 +91,8 @@ enum UserAnimeStatus: Int, CaseIterable {
             return "視聴中作品"
         case .onHold:
             return "視聴中断作品"
+        case .planned:
+            return "視聴予定作品"
         }
     }
 }

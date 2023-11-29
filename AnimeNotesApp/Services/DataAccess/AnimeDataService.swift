@@ -101,13 +101,14 @@ class AnimeDataService: FirestoreService, AnimeDataServiceProtocol {
                 .eraseToAnyPublisher()
         }
 
-        return Publishers.CombineLatest3(
+        return Publishers.CombineLatest4(
             countForStatus(UserAnimeStatus.watched.rawValue),
             countForStatus(UserAnimeStatus.watching.rawValue),
-            countForStatus(UserAnimeStatus.onHold.rawValue)
+            countForStatus(UserAnimeStatus.onHold.rawValue),
+            countForStatus(UserAnimeStatus.planned.rawValue)
         )
-        .map { watchedCount, watchingCount, onHoldCount in
-            StatusCounts(watched: watchedCount, watching: watchingCount, onHold: onHoldCount)
+        .map { watchedCount, watchingCount, onHoldCount, plannedCount in
+            StatusCounts(watched: watchedCount, watching: watchingCount, onHold: onHoldCount, planned: plannedCount)
         }
         .eraseToAnyPublisher()
     }

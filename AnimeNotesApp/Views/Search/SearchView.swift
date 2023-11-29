@@ -26,7 +26,7 @@ struct SearchView: View {
                 NavigationLink(
                     destination: searchVM.isAnimeSelected ? AnimeDetailView(
                         anime: searchVM.selectedAnime!,
-                        detailViewModel: AnimeDetailViewModel(
+                        ViewModel: AnimeDetailViewModel(
                             anime: searchVM.selectedAnime!,
                             episodeDataService: EpisodeDataService()
                         )

@@ -4,20 +4,9 @@ import Foundation
 import Combine
 import FirebaseAuth
 
-class StatusAnimeListViewModel: ObservableObject {
-    @Published var animes: [UserAnime] = []
-    @Published var isAnimeSelected = false
-    @Published var selectedAnime: UserAnime?
-    @Published var showingStatusSelection = false
-    @Published var selectedAnimeForStatusUpdate: UserAnime?
-    @Published var selectedStatus: Int = 0
-    private var cancellables: Set<AnyCancellable> = []
-    private let animeDataService: AnimeDataServiceProtocol
-    private var authenticationService: AuthenticationServiceProtocol
-    var userId: String {
-        return Auth.auth().currentUser?.uid ?? ""
-    }
+class StatusAnimeListViewModel: BaseViewModel {
     let status: Int
+    private var localCancellables = Set<AnyCancellable>()
 
     init(
         status: Int,
@@ -25,13 +14,13 @@ class StatusAnimeListViewModel: ObservableObject {
         authenticationService: AuthenticationServiceProtocol = AuthenticationService()
     ) {
         self.status = status
-        self.animeDataService = animeDataService
-        self.authenticationService = authenticationService
+        super.init(animeDataService: animeDataService)
+        fetchStatusAnimes(for: self.userId, with: status)
     }
 
     func fetchStatusAnimes(for userId: String, with status: Int) {
-        cancellables.forEach { $0.cancel() }
-        cancellables.removeAll()
+        localCancellables.forEach { $0.cancel() }
+        localCancellables.removeAll()
         
         animeDataService.fetchStatusAnimes(userId: userId, status: status)
             .receive(on: DispatchQueue.main)
@@ -45,28 +34,15 @@ class StatusAnimeListViewModel: ObservableObject {
                     self?.animes = animes
                 }
             )
-            .store(in: &cancellables)
+            .store(in: &localCancellables)
     }
     
-    func updateWatchingStatus(for animeId: Int, newStatus: Int) {
-        let userId = authenticationService.currentUserId
-        animeDataService.updateWatchingStatus(animeId: animeId, newStatus: newStatus, userId: userId)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        print("Error updating status: \(error.localizedDescription)")
-                    }
-                },
-                receiveValue: { [weak self] _ in
-                    self?.fetchStatusAnimes(for: userId, with: self?.status ?? 0)
-                }
-            )
-            .store(in: &cancellables)
+    override func updateWatchingStatus(for animeId: Int, newStatus: Int) {
+        super.updateWatchingStatus(for: animeId, newStatus: newStatus)
+        fetchStatusAnimes(for: userId, with: status)
     }
     
-    func selectAnimeForStatusUpdate(_ anime: UserAnime) {
-        selectedAnimeForStatusUpdate = anime
-        showingStatusSelection = true
+    override func selectAnimeForDetail(_ anime: UserAnime) {
+        super.selectAnimeForDetail(anime)
     }
 }

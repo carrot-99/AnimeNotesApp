@@ -26,10 +26,8 @@ class SeasonListViewModel: ObservableObject {
     
     func viewModelForSeason(_ season: String) -> AnimeListViewModel {
         if let viewModel = animeListViewModels[season] {
-            // 既に存在するビューモデルを返す
             return viewModel
         } else {
-            // 新しいビューモデルを作成し、辞書に追加
             let newViewModel = AnimeListViewModel(season: season)
             animeListViewModels[season] = newViewModel
             return newViewModel
