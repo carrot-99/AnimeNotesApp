@@ -9,13 +9,16 @@ struct LoginView: View {
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
     
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             CustomTextField(placeholder: "Email", text: $email)
+                .flatTextFieldStyle()
             CustomTextField(placeholder: "Password", text: $password, isSecure: true)
+                .flatTextFieldStyle()
             
             if let errorMessage = userSessionViewModel.errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
+                    .padding()
             }
             
             if userSessionViewModel.isLoading {
@@ -24,18 +27,12 @@ struct LoginView: View {
                 Button("Login") {
                     userSessionViewModel.signIn(email: email, password: password)
                 }
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.blue)
-                .cornerRadius(10)
+                .primaryButtonStyle()
             }
             NavigationLink("Create Account", destination: CreateAccountView())
+                .foregroundColor(.blue)
         }
         .padding()
         .dismissKeyboardOnTap()
-        .onAppear {
-            print("LoginView が表示された")
-            // Firebase サービスへのアクセスをここで行う場合、注意が必要
-        }
     }
 }

@@ -14,7 +14,6 @@ class FirestoreService: FirestoreServiceProtocol {
     
     func performQuery<T: Decodable>(_ query: Query, decodingType: T.Type) -> AnyPublisher<[T], Error> {
         Future<[T], Error> { promise in
-//            print("start performQuery")
             query.getDocuments { snapshot, error in
                 if let error = error {
                     print("getDataError")
@@ -22,13 +21,10 @@ class FirestoreService: FirestoreServiceProtocol {
                 } else if let snapshot = snapshot {
                     let results = snapshot.documents.compactMap { document -> T? in
                         let data = document.data()
-//                        print("performQuery:\(data)")
                         return try? document.data(as: T.self)
                     }
-//                    print("success performQuery")
                     promise(.success(results))
                 } else {
-//                    print("performQuery else pattern.")
                 }
             }
         }

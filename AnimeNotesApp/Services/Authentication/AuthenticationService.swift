@@ -15,8 +15,14 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
         return auth.currentUser?.uid ?? ""
     }
     
+    var currentUser: UserModel? {
+        guard let firebaseUser = Auth.auth().currentUser else {
+            return nil
+        }
+        return UserModel(uid: firebaseUser.uid, email: firebaseUser.email)
+    }
+    
     init() {
-//        print("AuthenticationService 初期化中")
         super.init()
     }
     
@@ -29,7 +35,12 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
                     promise(.failure(error))
                 } else if let user = authResult?.user {
                     let userDocumentRef = self.db.collection("users").document(user.uid)
-                    let userData = ["email": email]
+                    let userData = UserCreationData(
+                        email: email,
+                        username: "New User",
+                        age: 0
+                    )
+                    
                     self.setData(userDocumentRef, for: userData)
                         .sink(receiveCompletion: { completion in
                             if case let .failure(error) = completion {
@@ -38,7 +49,7 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
                         }, receiveValue: {
                             promise(.success(user))
                         })
-                        .store(in: &self.cancellables) // Cancellables should be a class property
+                        .store(in: &self.cancellables)
                 }
             }
         }
@@ -68,5 +79,42 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
             }
         }
         .eraseToAnyPublisher()
+    }
+    
+    func fetchUserInfo(userId: String) -> AnyPublisher<UserModel, Error> {
+        let userDocRef = db.collection("users").document(userId)
+        return Future<UserModel, Error> { promise in
+            userDocRef.getDocument { documentSnapshot, error in
+                if let error = error {
+                    promise(.failure(error))
+                } else if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
+                    guard let data = documentSnapshot.data() else {
+                        promise(.failure(NSError(domain: "FirestoreError", code: 1, userInfo: nil)))
+                        return
+                    }
+                    let userModel = UserModel(
+                        uid: userId,
+                        email: data["email"] as? String,
+                        username: data["username"] as? String,
+                        age: data["age"] as? Int
+                    )
+                    promise(.success(userModel))
+                } else {
+                    promise(.failure(NSError(domain: "FirestoreError", code: 0, userInfo: nil)))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    func updateUserInfo(userId: String, userData: [String: Any]) -> AnyPublisher<Void, Error> {
+        let userDocRef = db.collection("users").document(userId)
+        return updateData(userDocRef, data: userData)
+    }
+    
+    struct UserCreationData: Encodable {
+        let email: String
+        let username: String
+        let age: Int
     }
 }

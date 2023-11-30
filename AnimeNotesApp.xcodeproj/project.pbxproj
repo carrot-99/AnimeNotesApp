@@ -48,7 +48,6 @@
 		CEE07A6D2AF4F4B1005F1977 /* AnimeListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE07A6C2AF4F4B1005F1977 /* AnimeListViewModel.swift */; };
 		CEE200EA2AF63E52002BEE6E /* SeasonListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE200E92AF63E52002BEE6E /* SeasonListViewModel.swift */; };
 		CEE200EC2AF63E7D002BEE6E /* SeasonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE200EB2AF63E7D002BEE6E /* SeasonListView.swift */; };
-		CEEAAFB22B05B7290023A896 /* SeasonListNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFB12B05B7290023A896 /* SeasonListNavigation.swift */; };
 		CEEAAFB42B05DE450023A896 /* UserAnime.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFB32B05DE450023A896 /* UserAnime.swift */; };
 		CEEAAFB62B05DE7A0023A896 /* UserEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFB52B05DE7A0023A896 /* UserEpisode.swift */; };
 		CEEAAFB82B060CB70023A896 /* IdentifiableError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEAAFB72B060CB70023A896 /* IdentifiableError.swift */; };
@@ -64,6 +63,10 @@
 		CEF953312B16ECA900CA85B2 /* AccountInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF953302B16ECA900CA85B2 /* AccountInfoView.swift */; };
 		CEF953342B16ED4900CA85B2 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF953332B16ED4900CA85B2 /* UserModel.swift */; };
 		CEF953362B16EE1000CA85B2 /* EditAccountInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF953352B16EE1000CA85B2 /* EditAccountInfoView.swift */; };
+		CEF9533A2B18780600CA85B2 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF953392B18780600CA85B2 /* ViewModifiers.swift */; };
+		CEF9533C2B18784600CA85B2 /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9533B2B18784600CA85B2 /* ButtonStyles.swift */; };
+		CEF9533E2B1878C500CA85B2 /* ViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9533D2B1878C500CA85B2 /* ViewComponents.swift */; };
+		CEF953402B187DBB00CA85B2 /* ListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9533F2B187DBB00CA85B2 /* ListItemView.swift */; };
 		CEFFB67C2AF53FB4005A9932 /* AnimeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB67B2AF53FB4005A9932 /* AnimeModel.swift */; };
 		CEFFB67F2AF6244C005A9932 /* AnimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB67E2AF6244C005A9932 /* AnimeCell.swift */; };
 		CEFFB6822AF6252E005A9932 /* AnimeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB6812AF6252E005A9932 /* AnimeListView.swift */; };
@@ -136,7 +139,6 @@
 		CEE07A6C2AF4F4B1005F1977 /* AnimeListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeListViewModel.swift; sourceTree = "<group>"; };
 		CEE200E92AF63E52002BEE6E /* SeasonListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonListViewModel.swift; sourceTree = "<group>"; };
 		CEE200EB2AF63E7D002BEE6E /* SeasonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonListView.swift; sourceTree = "<group>"; };
-		CEEAAFB12B05B7290023A896 /* SeasonListNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonListNavigation.swift; sourceTree = "<group>"; };
 		CEEAAFB32B05DE450023A896 /* UserAnime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAnime.swift; sourceTree = "<group>"; };
 		CEEAAFB52B05DE7A0023A896 /* UserEpisode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEpisode.swift; sourceTree = "<group>"; };
 		CEEAAFB72B060CB70023A896 /* IdentifiableError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiableError.swift; sourceTree = "<group>"; };
@@ -154,6 +156,10 @@
 		CEF953302B16ECA900CA85B2 /* AccountInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInfoView.swift; sourceTree = "<group>"; };
 		CEF953332B16ED4900CA85B2 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		CEF953352B16EE1000CA85B2 /* EditAccountInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountInfoView.swift; sourceTree = "<group>"; };
+		CEF953392B18780600CA85B2 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
+		CEF9533B2B18784600CA85B2 /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
+		CEF9533D2B1878C500CA85B2 /* ViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewComponents.swift; sourceTree = "<group>"; };
+		CEF9533F2B187DBB00CA85B2 /* ListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemView.swift; sourceTree = "<group>"; };
 		CEFFB67B2AF53FB4005A9932 /* AnimeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeModel.swift; sourceTree = "<group>"; };
 		CEFFB67E2AF6244C005A9932 /* AnimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeCell.swift; sourceTree = "<group>"; };
 		CEFFB6812AF6252E005A9932 /* AnimeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeListView.swift; sourceTree = "<group>"; };
@@ -384,6 +390,10 @@
 			isa = PBXGroup;
 			children = (
 				CE8EC1872B04B56B003F6BDF /* DismissKeyboardModifier.swift */,
+				CEF953392B18780600CA85B2 /* ViewModifiers.swift */,
+				CEF9533B2B18784600CA85B2 /* ButtonStyles.swift */,
+				CEF9533D2B1878C500CA85B2 /* ViewComponents.swift */,
+				CEF9533F2B187DBB00CA85B2 /* ListItemView.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -409,7 +419,6 @@
 			children = (
 				CEE200EB2AF63E7D002BEE6E /* SeasonListView.swift */,
 				CEE200E92AF63E52002BEE6E /* SeasonListViewModel.swift */,
-				CEEAAFB12B05B7290023A896 /* SeasonListNavigation.swift */,
 			);
 			path = SeasonList;
 			sourceTree = "<group>";
@@ -817,13 +826,14 @@
 				CE8EC1852B04B51A003F6BDF /* CustomTextField.swift in Sources */,
 				CE6F0A222B103172000F681D /* SearchResultsView.swift in Sources */,
 				CEEAAFC02B0614B40023A896 /* AnimeDataServiceProtocol.swift in Sources */,
-				CEEAAFB22B05B7290023A896 /* SeasonListNavigation.swift in Sources */,
 				CEF9532E2B15D9C000CA85B2 /* TermsAgreementView.swift in Sources */,
 				CE6F0A1C2B09D4B6000F681D /* AnyEncodable.swift in Sources */,
 				CE6F0A0C2B066120000F681D /* AppError.swift in Sources */,
 				CE8FCBFC2AFB88210097D96B /* MainTabView.swift in Sources */,
 				CE8EC17E2B0468FB003F6BDF /* StatusAnimeListView.swift in Sources */,
+				CEF9533A2B18780600CA85B2 /* ViewModifiers.swift in Sources */,
 				CECF9E6B2B06411B000A5199 /* StatusCountView.swift in Sources */,
+				CEF953402B187DBB00CA85B2 /* ListItemView.swift in Sources */,
 				CE8EC16E2AFF9597003F6BDF /* AnimeDetailViewModel.swift in Sources */,
 				CEEAAFB62B05DE7A0023A896 /* UserEpisode.swift in Sources */,
 				CEE200EC2AF63E7D002BEE6E /* SeasonListView.swift in Sources */,
@@ -831,11 +841,13 @@
 				CEEAAFB42B05DE450023A896 /* UserAnime.swift in Sources */,
 				CEF953342B16ED4900CA85B2 /* UserModel.swift in Sources */,
 				CE6F0A1E2B0D9FE5000F681D /* AnimeService.swift in Sources */,
+				CEF9533C2B18784600CA85B2 /* ButtonStyles.swift in Sources */,
 				CE6F0A102B06669E000F681D /* FirestoreServiceProtocol.swift in Sources */,
 				CEEAAFC92B0633040023A896 /* EpisodeRepositoryProtocol.swift in Sources */,
 				CE8EC1762B036153003F6BDF /* SearchView.swift in Sources */,
 				CECF9E6D2B0648D1000A5199 /* AuthenticationServiceProtocol.swift in Sources */,
 				CEEAAFB82B060CB70023A896 /* IdentifiableError.swift in Sources */,
+				CEF9533E2B1878C500CA85B2 /* ViewComponents.swift in Sources */,
 				CE8EC1742B034F52003F6BDF /* StatusIconMapping.swift in Sources */,
 				CEF704262AF76B2800FD83DF /* LoginView.swift in Sources */,
 				CEE07A6D2AF4F4B1005F1977 /* AnimeListViewModel.swift in Sources */,

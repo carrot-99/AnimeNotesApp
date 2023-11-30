@@ -8,13 +8,16 @@ struct CreateAccountView: View {
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
     
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             CustomTextField(placeholder: "Email", text: $email)
+                .flatTextFieldStyle()
             CustomTextField(placeholder: "Password", text: $password, isSecure: true)
+                .flatTextFieldStyle()
             
             if let errorMessage = userSessionViewModel.errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
+                    .padding()
             }
             
             if userSessionViewModel.isLoading {
@@ -23,6 +26,7 @@ struct CreateAccountView: View {
                 Button("Create Account") {
                     userSessionViewModel.createAccount(email: email, password: password)
                 }
+                .primaryButtonStyle()
             }
         }
         .padding()
