@@ -4,7 +4,7 @@ import Combine
 
 class EpisodeDataService: FirestoreService, EpisodeDataServiceProtocol {
     func fetchEpisodes(for userId: String, animeId: Int) -> AnyPublisher<[UserEpisode], Error> {
-        print("EpisodeDataService:fetchEpisodes")
+//        print("EpisodeDataService:fetchEpisodes")
         let episodesRef = db.collection("userWatchingHistory")
             .document("\(userId)-\(animeId)")
             .collection("episodesHistory")
@@ -12,7 +12,7 @@ class EpisodeDataService: FirestoreService, EpisodeDataServiceProtocol {
     }
     
     func createEpisodesIfNotExist(for userId: String, animeId: Int, episodesCount: Int) -> AnyPublisher<Void, Error> {
-        print("EpisodeDataService:createEpisodesIfNotExist")
+//        print("EpisodeDataService:createEpisodesIfNotExist")
         guard episodesCount > 0 else {
             return Fail(error: CustomError.invalidEpisodeCount).eraseToAnyPublisher()
         }

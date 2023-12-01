@@ -18,10 +18,18 @@ struct AnimeListView: View {
                     },
                     onAnimeTap: {
                         viewModel.selectAnimeForDetail(anime)
+                    },
+                    updateStatus: { newStatus in
+                        // ここでアニメのステータスを更新するロジックを実装します
+                        viewModel.updateWatchingStatus(for: anime.anime_id, newStatus: newStatus)
                     }
                 )
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
             }
             .navigationTitle("\(viewModel.season)アニメ")
+            .background(Color(UIColor.systemGroupedBackground))
             .sheet(isPresented: $viewModel.showingStatusSelection) {
                 if let selectedAnime = viewModel.selectedAnimeForStatusUpdate {
                     StatusSelectionModalView(

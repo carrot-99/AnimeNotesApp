@@ -17,9 +17,17 @@ struct StatusAnimeListView: View {
                 },
                 onAnimeTap: {
                     viewModel.selectAnimeForDetail(anime)
+                },
+                updateStatus: { newStatus in
+                    // ここでアニメのステータスを更新するロジックを実装します
+                    viewModel.updateWatchingStatus(for: anime.anime_id, newStatus: newStatus)
                 }
             )
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
         }
+//        .background(Color(UIColor.systemGroupedBackground))
         .sheet(isPresented: $viewModel.showingStatusSelection) {
             if let selectedAnime = viewModel.selectedAnimeForStatusUpdate {
                 StatusSelectionModalView(

@@ -14,8 +14,16 @@ struct SearchResultsView: View {
                 },
                 onAnimeTap: {
                     searchVM.selectAnimeForDetail(anime)
+                },
+                updateStatus: { newStatus in
+                    // ここでアニメのステータスを更新するロジックを実装します
+                    searchVM.updateWatchingStatus(for: anime.anime_id, newStatus: newStatus)
                 }
             )
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
         }
+        .background(Color(UIColor.systemGroupedBackground))
     }
 }

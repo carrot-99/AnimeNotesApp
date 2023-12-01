@@ -36,7 +36,7 @@ struct AnimeDetailView: View {
                 HStack {
                     Text("放送時期：")
                         .fontWeight(.semibold)
-                    Text(anime.seasonYear != nil ? "\(anime.seasonYear!)" : "--")
+                    Text(anime.seasonYear != nil ? "\(String(anime.seasonYear!))" : "--")
                     Text(anime.season ?? "-")
                 }
 
@@ -47,13 +47,15 @@ struct AnimeDetailView: View {
                         .progressViewStyle(CircularProgressViewStyle())
                         .scaleEffect(2)
                 } else {
-                    ForEach(ViewModel.episodes, id: \.id) { episode in
-                        HStack {
-                            Image(systemName: iconForStatus(episode.status))
-                                .onTapGesture {
-                                    ViewModel.selectEpisode(episode)
-                                }
-                            Text("エピソード \(episode.episode_num)")
+                    VStack(spacing: 8) {
+                        ForEach(ViewModel.episodes, id: \.id) { episode in
+                            ListItemView(
+                                title: "エピソード \(episode.episode_num)",
+                                iconName: iconForStatus(episode.status)
+                            ) {
+                                ViewModel.selectEpisode(episode)
+                            }
+                            .padding(.horizontal)
                         }
                     }
                 }
