@@ -67,6 +67,8 @@
 		CEF9533C2B18784600CA85B2 /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9533B2B18784600CA85B2 /* ButtonStyles.swift */; };
 		CEF9533E2B1878C500CA85B2 /* ViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9533D2B1878C500CA85B2 /* ViewComponents.swift */; };
 		CEF953402B187DBB00CA85B2 /* ListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9533F2B187DBB00CA85B2 /* ListItemView.swift */; };
+		CEF953452B19D50C00CA85B2 /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF953442B19D50C00CA85B2 /* TermsView.swift */; };
+		CEF953472B19D52400CA85B2 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF953462B19D52400CA85B2 /* PrivacyPolicyView.swift */; };
 		CEFFB67C2AF53FB4005A9932 /* AnimeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB67B2AF53FB4005A9932 /* AnimeModel.swift */; };
 		CEFFB67F2AF6244C005A9932 /* AnimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB67E2AF6244C005A9932 /* AnimeCell.swift */; };
 		CEFFB6822AF6252E005A9932 /* AnimeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFFB6812AF6252E005A9932 /* AnimeListView.swift */; };
@@ -160,6 +162,8 @@
 		CEF9533B2B18784600CA85B2 /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
 		CEF9533D2B1878C500CA85B2 /* ViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewComponents.swift; sourceTree = "<group>"; };
 		CEF9533F2B187DBB00CA85B2 /* ListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemView.swift; sourceTree = "<group>"; };
+		CEF953442B19D50C00CA85B2 /* TermsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsView.swift; sourceTree = "<group>"; };
+		CEF953462B19D52400CA85B2 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		CEFFB67B2AF53FB4005A9932 /* AnimeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeModel.swift; sourceTree = "<group>"; };
 		CEFFB67E2AF6244C005A9932 /* AnimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeCell.swift; sourceTree = "<group>"; };
 		CEFFB6812AF6252E005A9932 /* AnimeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeListView.swift; sourceTree = "<group>"; };
@@ -532,6 +536,15 @@
 			path = UserAccount;
 			sourceTree = "<group>";
 		};
+		CEF953432B19D4E200CA85B2 /* TermsAndPrivacyPolicy */ = {
+			isa = PBXGroup;
+			children = (
+				CEF953442B19D50C00CA85B2 /* TermsView.swift */,
+				CEF953462B19D52400CA85B2 /* PrivacyPolicyView.swift */,
+			);
+			path = TermsAndPrivacyPolicy;
+			sourceTree = "<group>";
+		};
 		CEFDFB192AF4E70700FA67CB /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -548,6 +561,7 @@
 				CE8EC1972B04BDE3003F6BDF /* StatusAnimeList */,
 				CE8EC1952B04BDAD003F6BDF /* Settings */,
 				CEF9532F2B16EC8100CA85B2 /* AccountInfo */,
+				CEF953432B19D4E200CA85B2 /* TermsAndPrivacyPolicy */,
 				CE8EC1862B04B536003F6BDF /* Modifiers */,
 			);
 			path = Views;
@@ -841,6 +855,7 @@
 				CEEAAFB42B05DE450023A896 /* UserAnime.swift in Sources */,
 				CEF953342B16ED4900CA85B2 /* UserModel.swift in Sources */,
 				CE6F0A1E2B0D9FE5000F681D /* AnimeService.swift in Sources */,
+				CEF953452B19D50C00CA85B2 /* TermsView.swift in Sources */,
 				CEF9533C2B18784600CA85B2 /* ButtonStyles.swift in Sources */,
 				CE6F0A102B06669E000F681D /* FirestoreServiceProtocol.swift in Sources */,
 				CEEAAFC92B0633040023A896 /* EpisodeRepositoryProtocol.swift in Sources */,
@@ -851,6 +866,7 @@
 				CE8EC1742B034F52003F6BDF /* StatusIconMapping.swift in Sources */,
 				CEF704262AF76B2800FD83DF /* LoginView.swift in Sources */,
 				CEE07A6D2AF4F4B1005F1977 /* AnimeListViewModel.swift in Sources */,
+				CEF953472B19D52400CA85B2 /* PrivacyPolicyView.swift in Sources */,
 				CEEAAFBE2B0612890023A896 /* BaseViewModel.swift in Sources */,
 				CE8EC18E2B04BBE5003F6BDF /* AppDelegate.swift in Sources */,
 				CEF7042C2AF7757B00FD83DF /* CreateAccountView.swift in Sources */,

@@ -15,5 +15,10 @@ struct ContentView: View {
         } else {
             LoginView()
         }
+        
+        // デバッグ用のリセットボタン
+//        Button("同意をリセット") {
+//            isTermsAgreed = false
+//        }
     }
 }

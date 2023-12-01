@@ -26,6 +26,14 @@ struct SettingsView: View {
                     }
                 }
                 
+                NavigationLink(destination: TermsView()) {
+                    SettingsButtonLabel(title: "利用規約", color: Color.gray)
+                }
+                
+                NavigationLink(destination: PrivacyPolicyView()) {
+                    SettingsButtonLabel(title: "プライバシーポリシー", color: Color.gray)
+                }
+                
                 if let errorMessage = userSessionViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
