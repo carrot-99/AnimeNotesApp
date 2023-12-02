@@ -11,4 +11,5 @@ protocol AuthenticationServiceProtocol {
     func updateUserInfo(userId: String, userData: [String: Any]) -> AnyPublisher<Void, Error>
     func fetchUserInfo(userId: String) -> AnyPublisher<UserModel, Error>
     var currentUser: UserModel? { get }
+    func resetPassword(email: String) -> AnyPublisher<Void, Error>
 }

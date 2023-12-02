@@ -4,6 +4,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
+    @State private var showingLogoutAlert = false
 
     var body: some View {
         NavigationView {
@@ -13,8 +14,18 @@ struct SettingsView: View {
                         SettingsButtonLabel(title: "アカウント情報", color: Color.blue)
                     }
                     
-                    Button(action: userSessionViewModel.signOut) {
+                    Button(action: { showingLogoutAlert = true }) {
                         SettingsButtonLabel(title: "ログアウト", color: Color.red)
+                    }
+                    .alert(isPresented: $showingLogoutAlert) {
+                        Alert(
+                            title: Text("ログアウト"),
+                            message: Text("本当にログアウトしますか？"),
+                            primaryButton: .destructive(Text("ログアウト"), action: {
+                                userSessionViewModel.signOut()
+                            }),
+                            secondaryButton: .cancel()
+                        )
                     }
                 } else {
                     NavigationLink(destination: LoginView()) {

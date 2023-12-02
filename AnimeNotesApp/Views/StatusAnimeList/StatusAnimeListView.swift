@@ -65,6 +65,8 @@ struct StatusAnimeListView: View {
             return "視聴中断作品"
         case 3:
             return "視聴済作品"
+        case 4:
+            return "視聴予定作品"
         default:
             return "未視聴作品"
         }

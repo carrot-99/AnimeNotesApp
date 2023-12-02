@@ -51,6 +51,12 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
                         })
                         .store(in: &self.cancellables)
                 }
+                
+                authResult?.user.sendEmailVerification(completion: { error in
+                    if let error = error {
+                        print("メール確認送信エラー: \(error.localizedDescription)")
+                    }
+                })
             }
         }
         .eraseToAnyPublisher()
@@ -116,5 +122,20 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
         let email: String
         let username: String
         let age: Int
+    }
+}
+
+extension AuthenticationService {
+    func resetPassword(email: String) -> AnyPublisher<Void, Error> {
+        Future<Void, Error> { promise in
+            self.auth.sendPasswordReset(withEmail: email) { error in
+                if let error = error {
+                    promise(.failure(error))
+                } else {
+                    promise(.success(()))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
     }
 }

@@ -4,6 +4,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel(authService: AuthenticationService())
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         NavigationView {
@@ -27,6 +28,7 @@ struct HomeView: View {
                     }
                 }
             }
+            .background(colorScheme == .dark ? Color(white: 0.05) : Color(UIColor.systemGroupedBackground))
         }
         .onAppear(perform: viewModel.refreshStatusCounts)
     }

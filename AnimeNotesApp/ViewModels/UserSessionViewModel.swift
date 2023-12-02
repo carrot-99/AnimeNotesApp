@@ -27,7 +27,9 @@ class UserSessionViewModel: ObservableObject {
                     self?.handleError(error)
                 }
             }, receiveValue: { [weak self] user in
+                self?.updateSuccessMessage = "アカウントが作成されました。確認メールをご確認ください。"
                 self?.isUserAuthenticated = true
+                self?.clearErrorMessage()
                 print("Account created for user ID: \(user.uid)")
             })
             .store(in: &cancellables)
@@ -44,6 +46,7 @@ class UserSessionViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] user in
                 self?.isUserAuthenticated = true
+                self?.clearErrorMessage()
                 print("Logged in user ID: \(user.uid)")
             })
             .store(in: &cancellables)
@@ -111,7 +114,23 @@ class UserSessionViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    private func clearErrorMessage() {
+        errorMessage = nil
+    }
+    
     private func handleError(_ error: Error) {
         self.errorMessage = error.localizedDescription
+    }
+}
+
+extension UserSessionViewModel {
+    func resetPassword(email: String) {
+        authService.resetPassword(email: email)
+            .sink(receiveCompletion: { completion in
+                // エラーハンドリング
+            }, receiveValue: { _ in
+                // メール送信成功メッセージなど
+            })
+            .store(in: &cancellables)
     }
 }

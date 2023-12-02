@@ -88,5 +88,24 @@ class AnimeDetailViewModel: ObservableObject {
             )
             .store(in: &cancellables)
     }
+    
+    func seasonTranslate(season: String) -> String {
+        var translatedSeason: String
+        
+        switch season {
+        case "SPRING":
+            translatedSeason = "春"
+        case "SUMMER":
+            translatedSeason = "夏"
+        case "FALL":
+            translatedSeason = "秋"
+        case "WINTER":
+            translatedSeason = "冬"
+        default:
+            translatedSeason = season
+        }
+        
+        return translatedSeason
+    }
 }
 

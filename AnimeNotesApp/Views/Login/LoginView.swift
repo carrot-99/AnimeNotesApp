@@ -9,30 +9,34 @@ struct LoginView: View {
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
     
     var body: some View {
-        VStack(spacing: 16) {
-            CustomTextField(placeholder: "Email", text: $email)
-                .flatTextFieldStyle()
-            CustomTextField(placeholder: "Password", text: $password, isSecure: true)
-                .flatTextFieldStyle()
-            
-            if let errorMessage = userSessionViewModel.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .padding()
-            }
-            
-            if userSessionViewModel.isLoading {
-                ProgressView()
-            } else {
-                Button("Login") {
-                    userSessionViewModel.signIn(email: email, password: password)
+        NavigationView {
+            VStack(spacing: 16) {
+                CustomTextField(placeholder: "メールアドレス", text: $email)
+                CustomTextField(placeholder: "パスワード", text: $password, isSecure: true)
+                
+                if let errorMessage = userSessionViewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
                 }
-                .primaryButtonStyle()
-            }
-            NavigationLink("Create Account", destination: CreateAccountView())
+                
+                if userSessionViewModel.isLoading {
+                    ProgressView()
+                } else {
+                    Button("ログイン") {
+                        userSessionViewModel.signIn(email: email, password: password)
+                    }
+                    .primaryButtonStyle()
+                }
+                Button("パスワードを忘れた場合") {
+                    userSessionViewModel.resetPassword(email: email)
+                }
                 .foregroundColor(.blue)
+                NavigationLink("新規アカウント作成", destination: CreateAccountView())
+                    .foregroundColor(.blue)
+            }
+            .padding()
+            .dismissKeyboardOnTap()
         }
-        .padding()
-        .dismissKeyboardOnTap()
     }
 }

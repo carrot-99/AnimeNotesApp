@@ -32,15 +32,18 @@ struct AnimeDetailView: View {
                 Text(anime.title)
                     .font(.title)
                     .fontWeight(.bold)
+                    .padding(.leading, 16)
                 
                 HStack {
                     Text("放送時期：")
                         .fontWeight(.semibold)
                     Text(anime.seasonYear != nil ? "\(String(anime.seasonYear!))" : "--")
-                    Text(anime.season ?? "-")
+                    Text(ViewModel.seasonTranslate(season: anime.season ?? "-"))
+                    Text("エピソード数：")
+                        .fontWeight(.semibold)
+                    Text(anime.episodes != nil ? "全\(anime.episodes!)話" : "全--話")
                 }
-
-                Text(anime.episodes != nil ? "全\(anime.episodes!)話" : "全--話")
+                .padding(.leading, 20)
                 
                 if ViewModel.isLoading {
                     ProgressView()

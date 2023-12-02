@@ -7,6 +7,19 @@ struct AnimeListViewComponent: View {
     var onStatusIconTap: () -> Void
     var onAnimeTap: () -> Void
     var updateStatus: (Int) -> Void
+    @Environment(\.colorScheme) var colorScheme
+    
+    var backgroundColor: Color {
+        if colorScheme == .dark {
+            return Color(red: 44 / 255, green: 44 / 255, blue: 46 / 255)
+        } else {
+            return Color.white
+        }
+    }
+    
+    var borderColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.25) : Color.gray.opacity(0.5)
+    }
 
     // ステータス選択肢を定義
     let statuses = [
@@ -20,13 +33,12 @@ struct AnimeListViewComponent: View {
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: iconForStatus(anime.status))
-                .foregroundColor(.blue)
+                .foregroundColor(colorScheme == .dark ? .white : .blue)
                 .imageScale(.large)
-                .contextMenu { // コンテキストメニューを追加
-                    // ステータス選択肢を表示する
+                .contextMenu {
                     ForEach(0..<5) { status in
                         Button {
-                            updateStatus(status) // ステータス更新関数を呼び出す
+                            updateStatus(status)
                         } label: {
                             Text("Status \(status)")
                         }
@@ -36,13 +48,18 @@ struct AnimeListViewComponent: View {
 
             Text(anime.title)
                 .font(.headline)
+                .foregroundColor(colorScheme == .dark ? .white : .primary)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .onTapGesture(perform: onAnimeTap)
         }
         .padding()
-        .background(Color.white)
+        .background(backgroundColor)
         .cornerRadius(10)
-        .shadow(color: Color.gray.opacity(0.2), radius: 5, x: 0, y: 2)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(borderColor, lineWidth: 1)
+        )
+        .shadow(color: colorScheme == .dark ? Color.gray.opacity(0.8) : Color.gray.opacity(0.3), radius: 5, x: 0, y: 2)
         .padding(.horizontal)
         .padding(.vertical, 4)
     }
