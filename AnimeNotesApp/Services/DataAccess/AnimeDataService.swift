@@ -4,7 +4,6 @@ import Combine
 
 class AnimeDataService: FirestoreService, AnimeDataServiceProtocol {
     func fetchAnimes(seasonYear: Int, season: String) -> AnyPublisher<[Anime], Error> {
-        print("AnimeDataService:fetchAnimes")
         let query = db.collection("animes")
             .whereField("seasonYear", isEqualTo: seasonYear)
             .whereField("season", isEqualTo: season)
@@ -12,7 +11,6 @@ class AnimeDataService: FirestoreService, AnimeDataServiceProtocol {
     }
     
     func createOrUpdateUserAnime(userId: String, anime: Anime) -> AnyPublisher<UserAnime, Error> {
-        print("AnimeDataService:createOrUpdateUserAnime \(anime.title.native)")
         let userAnime = UserAnime(
             id: "\(userId)-\(anime.id ?? "")",
             user_id: userId,

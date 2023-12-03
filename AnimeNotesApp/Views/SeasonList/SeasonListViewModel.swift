@@ -64,8 +64,7 @@ extension SeasonListViewModel {
         self.navigateToAnimeList = true
     }
 
-    func navigateToAnimeDetail() -> AnimeListView? {
-        guard let season = selectedSeason else { return nil }
+    func navigateToAnimeDetail(season: String) -> AnimeListView {
         let viewModel = viewModelForSeason(season)
         return AnimeListView(viewModel: viewModel)
     }

@@ -30,7 +30,6 @@ class UserSessionViewModel: ObservableObject {
                 self?.updateSuccessMessage = "アカウントが作成されました。確認メールをご確認ください。"
                 self?.isUserAuthenticated = true
                 self?.clearErrorMessage()
-                print("Account created for user ID: \(user.uid)")
             })
             .store(in: &cancellables)
     }
@@ -47,7 +46,6 @@ class UserSessionViewModel: ObservableObject {
             }, receiveValue: { [weak self] user in
                 self?.isUserAuthenticated = true
                 self?.clearErrorMessage()
-                print("Logged in user ID: \(user.uid)")
             })
             .store(in: &cancellables)
     }
@@ -83,7 +81,6 @@ class UserSessionViewModel: ObservableObject {
                 self?.currentUser?.username = username
                 self?.currentUser?.age = age
             } else {
-                print("Document does not exist")
             }
         }
     }

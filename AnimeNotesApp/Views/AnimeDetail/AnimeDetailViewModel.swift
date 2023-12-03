@@ -52,7 +52,6 @@ class AnimeDetailViewModel: ObservableObject {
             .sink(
                 receiveCompletion: { completion in
                     if case .failure(_) = completion {
-                        print("Error in creating episodes")
                     }
                 },
                 receiveValue: { [weak self] _ in
@@ -75,7 +74,6 @@ class AnimeDetailViewModel: ObservableObject {
             .sink(
                 receiveCompletion: { completion in
                     if case .failure(_) = completion {
-                        print("Error updating episode status")
                     }
                 },
                 receiveValue: { [weak self] _ in

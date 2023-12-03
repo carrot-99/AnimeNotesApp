@@ -6,7 +6,6 @@ struct ListItemView: View {
     @Environment(\.colorScheme) var colorScheme
     var title: String
     var iconName: String?
-    var action: () -> Void
 
     var borderColor: Color {
         colorScheme == .dark ? Color.white.opacity(0.25) : Color.gray.opacity(0.5)
@@ -33,7 +32,6 @@ struct ListItemView: View {
                 .stroke(borderColor, lineWidth: 1)
         )
         .shadow(color: colorScheme == .dark ? Color.gray.opacity(0.8) : Color.gray.opacity(0.3), radius: 5, x: 0, y: 2)
-        .onTapGesture(perform: action)
         .padding(.horizontal)
         .padding(.vertical, 4)
     }

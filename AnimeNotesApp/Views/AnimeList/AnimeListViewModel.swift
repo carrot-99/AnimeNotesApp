@@ -35,7 +35,6 @@ class AnimeListViewModel: BaseViewModel {
     }
     
     private func fetchAnimes(seasonYear: Int, season: String) {
-        print("fetchAnimes started for season: \(seasonYear) \(season)")
         isLoading = true
         animeDataService.fetchAnimes(seasonYear: seasonYear, season: season)
             .flatMap { [weak self] animes -> AnyPublisher<[UserAnime], Error> in
@@ -48,7 +47,6 @@ class AnimeListViewModel: BaseViewModel {
             .sink(
                 receiveCompletion: { [weak self] completion in
                     self?.isLoading = false
-                    print("fetchAnimes completed for season: \(seasonYear) \(season)")
                     if case let .failure(error) = completion {
                         print("Error fetching animes: \(error)")
                         self?.errorMessage = error.localizedDescription
@@ -84,7 +82,6 @@ class AnimeListViewModel: BaseViewModel {
     }
     
     override func selectAnimeForDetail(_ anime: UserAnime) {
-        print("AnimeListViewModel selectAnimeForDetail \(anime.title)")
         super.selectAnimeForDetail(anime)
     }
 }

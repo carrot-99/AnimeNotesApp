@@ -71,7 +71,6 @@ class SearchViewModel: ObservableObject {
     }
     
     func selectAnime(_ anime: UserAnime) {
-        print("selectAnime: \(anime.title)")
         self.selectedAnime = anime
         self.isAnimeSelected = true
     }

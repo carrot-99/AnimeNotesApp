@@ -16,7 +16,6 @@ class FirestoreService: FirestoreServiceProtocol {
         Future<[T], Error> { promise in
             query.getDocuments { snapshot, error in
                 if let error = error {
-                    print("getDataError")
                     promise(.failure(error))
                 } else if let snapshot = snapshot {
                     let results = snapshot.documents.compactMap { document -> T? in
@@ -53,7 +52,6 @@ class FirestoreService: FirestoreServiceProtocol {
 
     func updateData(_ documentReference: DocumentReference, data: [String: Any]) -> AnyPublisher<Void, Error> {
         Future<Void, Error> { promise in
-            print("FirestoreService:updateData")
             documentReference.updateData(data) { error in
                 if let error = error {
                     promise(.failure(error))

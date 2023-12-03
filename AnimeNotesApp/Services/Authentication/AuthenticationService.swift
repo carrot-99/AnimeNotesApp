@@ -28,7 +28,6 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
     
     func createAccount(email: String, password: String) -> AnyPublisher<User, Error> {
         Future<User, Error> { [weak self] promise in
-            print("アカウント作成を開始")
             guard let self = self else { return }
             self.auth.createUser(withEmail: email, password: password) { authResult, error in
                 if let error = error {

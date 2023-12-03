@@ -6,11 +6,11 @@ struct SeasonListView: View {
     @StateObject var seasonListVM: SeasonListViewModel
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List(seasonListVM.seasons, id: \.self) { season in
-                ListItemView(title: season, iconName: nil, action: {
-                    seasonListVM.selectSeason(season)
-                })
+                NavigationLink(destination: seasonListVM.navigateToAnimeDetail(season: season)){
+                    ListItemView(title: season, iconName: nil)
+                }
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
@@ -25,9 +25,6 @@ struct SeasonListView: View {
                         seasonListVM.dismissError()
                     }
                 )
-            }
-            .navigationDestination(isPresented: $seasonListVM.navigateToAnimeList) {
-                seasonListVM.navigateToAnimeDetail()
             }
             .background(Color(UIColor.systemGroupedBackground))
         }

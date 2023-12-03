@@ -7,7 +7,7 @@ struct AnimeListView: View {
     @ObservedObject var viewModel: AnimeListViewModel
     
     var body: some View {
-        NavigationStack {
+        NavigationView{
             List(viewModel.animes) { anime in
                 AnimeListViewComponent(
                     anime: anime,

@@ -5,7 +5,7 @@ struct TermsAgreementView: View {
     @State private var localIsTermsAgreed: Bool = false
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
                 Spacer()
 

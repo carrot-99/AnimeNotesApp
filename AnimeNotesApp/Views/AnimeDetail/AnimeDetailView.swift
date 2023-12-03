@@ -55,7 +55,8 @@ struct AnimeDetailView: View {
                             ListItemView(
                                 title: "エピソード \(episode.episode_num)",
                                 iconName: iconForStatus(episode.status)
-                            ) {
+                            )
+                            .onTapGesture {
                                 ViewModel.selectEpisode(episode)
                             }
                             .padding(.horizontal)
