@@ -9,6 +9,7 @@ class AnimeDetailViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var showingStatusSelection = false
     @Published var selectedStatus: Int = 0
+    @Published var statusUpdated = false
     private var selectedEpisode: UserEpisode?
     private var cancellables = Set<AnyCancellable>()
     private let episodeDataService: EpisodeDataServiceProtocol
@@ -72,14 +73,16 @@ class AnimeDetailViewModel: ObservableObject {
         episodeDataService.updateEpisodeStatus(userId: selectedEpisode.user_id, animeId: selectedEpisode.anime_id, episodeNum: selectedEpisode.episode_num, newStatus: selectedStatus)
             .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: { completion in
+                receiveCompletion: { [weak self] completion in
                     if case .failure(_) = completion {
+                        self?.statusUpdated = false
                     }
                 },
                 receiveValue: { [weak self] _ in
                     self?.selectedStatus = self?.selectedEpisode?.status ?? 0
                     if let index = self?.episodes.firstIndex(where: { $0.episode_num == selectedEpisode.episode_num }) {
                         self?.episodes[index].status = self?.selectedStatus ?? 0
+                        self?.statusUpdated = true
                     }
                     self?.showingStatusSelection = false
                 }

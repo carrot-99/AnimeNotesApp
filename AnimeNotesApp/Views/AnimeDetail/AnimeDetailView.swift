@@ -67,6 +67,12 @@ struct AnimeDetailView: View {
             .onAppear {
                 ViewModel.fetchEpisodes(for: anime)
             }
+            .onChange(of: ViewModel.statusUpdated) { updated in
+                if updated {
+                    // ステータスが更新されたらビューを再描画
+                    self.ViewModel.fetchEpisodes(for: anime)
+                }
+            }
             .padding()
         }
         .navigationBarTitle(Text(anime.title), displayMode: .inline)

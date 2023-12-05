@@ -20,6 +20,7 @@ struct StatusSelectionModalView: View {
                 Button(action: {
                     self.selectedStatus = status.0
                     self.updateStatus(status.0)
+                    self.isPresented = false
                 }) {
                     HStack {
                         Image(systemName: status.2)
