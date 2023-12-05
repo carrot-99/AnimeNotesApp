@@ -56,5 +56,6 @@ struct SettingsView: View {
             .padding()
             .navigationTitle("設定")
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

@@ -12,6 +12,7 @@ class SeasonListViewModel: ObservableObject {
     @Published var hasError = false
     @Published var selectedSeason: String?
     @Published var navigateToAnimeList = false
+    @Published var selectedAnimeListViewModel: AnimeListViewModel?
     @Published var error: IdentifiableError? {
         didSet {
             hasError = error != nil
@@ -59,18 +60,31 @@ class SeasonListViewModel: ObservableObject {
 }
 
 extension SeasonListViewModel {
+    
     func selectSeason(_ season: String) {
+        print("selectSeasonが呼び出されました。シーズン: \(season)")
+        guard self.selectedSeason != season else { return }
         self.selectedSeason = season
-        self.navigateToAnimeList = true
+        fetchDataForSelectedSeason()
+    }
+
+    private func fetchDataForSelectedSeason() {
+        guard let season = selectedSeason else { return }
+        let viewModel = viewModelForSeason(season)
+        viewModel.fetchDataForSeason()
+        self.selectedAnimeListViewModel = viewModel
     }
 
     func navigateToAnimeDetail(season: String) -> AnimeListView {
+        print("navigateToAnimeDetailが呼び出されました。シーズン: \(season)")
         let viewModel = viewModelForSeason(season)
+        viewModel.fetchDataForSeason() // ここでデータをフェッチする
         return AnimeListView(viewModel: viewModel)
     }
 
     func resetNavigationState() {
-        self.navigateToAnimeList = false
-        self.selectedSeason = nil
+        selectedSeason = nil
+        selectedAnimeListViewModel = nil
+        navigateToAnimeList = false
     }
 }

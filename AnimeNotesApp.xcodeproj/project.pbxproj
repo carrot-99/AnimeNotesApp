@@ -548,8 +548,8 @@
 		CEFDFB192AF4E70700FA67CB /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				CE8FCBFB2AFB88210097D96B /* MainTabView.swift */,
 				CE6F0A192B085C39000F681D /* ContentView.swift */,
+				CE8FCBFB2AFB88210097D96B /* MainTabView.swift */,
 				CEF9532C2B15D99A00CA85B2 /* TermsAgreement */,
 				CE8EC18F2B04BCCE003F6BDF /* Login */,
 				CE8EC1902B04BCE2003F6BDF /* CreateAccount */,

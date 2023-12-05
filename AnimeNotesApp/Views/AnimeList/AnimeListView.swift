@@ -7,7 +7,7 @@ struct AnimeListView: View {
     @ObservedObject var viewModel: AnimeListViewModel
     
     var body: some View {
-        NavigationView{
+//        NavigationView{
             List(viewModel.animes) { anime in
                 AnimeListViewComponent(
                     anime: anime,
@@ -28,7 +28,13 @@ struct AnimeListView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
             }
-            .navigationTitle("\(viewModel.season)アニメ")
+            .onAppear {
+//                print("AnimeListViewが表示されました。アニメの数: \(viewModel.animes.count)")
+                if viewModel.animes.isEmpty {
+                    print("アニメデータがありません。")
+                }
+            }
+            .navigationBarTitle("\(viewModel.season)アニメ", displayMode: .inline)
             .background(Color(UIColor.systemGroupedBackground))
             .sheet(isPresented: $viewModel.showingStatusSelection) {
                 if let selectedAnime = viewModel.selectedAnimeForStatusUpdate {
@@ -41,7 +47,7 @@ struct AnimeListView: View {
                     )
                 }
             }
-        }
+//        }
         .background(
             NavigationLink(
                 destination: viewModel.isAnimeSelected ? AnimeDetailView(

@@ -36,7 +36,9 @@ struct LoginView: View {
                     .foregroundColor(.blue)
             }
             .padding()
+            .navigationTitle("ログイン")
             .dismissKeyboardOnTap()
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

@@ -50,5 +50,6 @@ struct SearchView: View {
                 Text("情報を読み込めませんでした。")
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

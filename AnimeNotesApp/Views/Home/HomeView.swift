@@ -31,5 +31,6 @@ struct HomeView: View {
             .background(colorScheme == .dark ? Color(white: 0.05) : Color(UIColor.systemGroupedBackground))
         }
         .onAppear(perform: viewModel.refreshStatusCounts)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

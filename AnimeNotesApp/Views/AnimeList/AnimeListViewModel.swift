@@ -15,13 +15,26 @@ class AnimeListViewModel: BaseViewModel {
     private var localCancellables = Set<AnyCancellable>()
     let season: String
     
-    init(
-        season: String,
-        animeDataService: AnimeDataServiceProtocol = AnimeDataService()
-    ) {
+    init(season: String, animeDataService: AnimeDataServiceProtocol = AnimeDataService()) {
         self.season = season
         super.init(animeDataService: animeDataService)
-        parseSeasonAndFetchAnimes(season: season)
+        // フェッチロジックをここから削除
+    }
+    
+    func fetchDataForSeason() {
+//        print("fetchDataForSeasonが呼び出されました。シーズン: \(self.season)")
+        
+        let components = SeasonUtility.parseSeasonComponents(from: self.season)
+        print("パースされたシーズンデータ: 年 - \(components.year), シーズン - \(components.season)")
+
+        guard components.year > 0, !components.season.isEmpty else {
+            self.errorMessage = "Invalid season data."
+            self.showingError = true
+            print("エラー: 不正なシーズンデータ")
+            return
+        }
+
+        self.fetchAnimes(seasonYear: components.year, season: components.season)
     }
     
     private func parseSeasonAndFetchAnimes(season: String) {
@@ -48,12 +61,13 @@ class AnimeListViewModel: BaseViewModel {
                 receiveCompletion: { [weak self] completion in
                     self?.isLoading = false
                     if case let .failure(error) = completion {
-                        print("Error fetching animes: \(error)")
+                        print("アニメデータのフェッチ中にエラーが発生しました: \(error)")
                         self?.errorMessage = error.localizedDescription
                         self?.showingError = true
                     }
                 },
                 receiveValue: { [weak self] userAnimes in
+//                    print("フェッチされたアニメの数: \(userAnimes.count)")
                     self?.animes = userAnimes
                 }
             )
