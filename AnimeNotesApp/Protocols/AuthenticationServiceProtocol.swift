@@ -12,4 +12,6 @@ protocol AuthenticationServiceProtocol {
     func fetchUserInfo(userId: String) -> AnyPublisher<UserModel, Error>
     var currentUser: UserModel? { get }
     func resetPassword(email: String) -> AnyPublisher<Void, Error>
+    func deleteUser() -> AnyPublisher<Void, Error> 
+    func reauthenticate(email: String, password: String) -> AnyPublisher<Void, Error>
 }

@@ -5,6 +5,9 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
     @State private var showingLogoutAlert = false
+    @State private var showingDeleteAccountAlert = false
+    @State private var showingPasswordPrompt = false
+    @State private var passwordInput = ""
 
     var body: some View {
         NavigationView {
@@ -26,6 +29,34 @@ struct SettingsView: View {
                             }),
                             secondaryButton: .cancel()
                         )
+                    }
+                    
+                    Button(action: {
+                        self.showingPasswordPrompt = true
+                    }) {
+                        SettingsButtonLabel(title: "アカウント削除", color: Color.red)
+                    }
+                    .sheet(isPresented: $showingPasswordPrompt) {
+                        VStack(spacing: 20) {
+                            Text("アカウントを削除するにはパスワードを入力してください")
+                            TextField("パスワード", text: $passwordInput)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .secureTextFieldStyle()
+                            Button("アカウント削除") {
+                                userSessionViewModel.attemptToDeleteAccount(password: passwordInput)
+                                showingPasswordPrompt = false
+                            }
+                            .foregroundColor(.red)
+                            Button("キャンセル") {
+                                showingPasswordPrompt = false
+                            }
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color(.systemBackground))
+                        .edgesIgnoringSafeArea(.all)
                     }
                 } else {
                     NavigationLink(destination: LoginView()) {

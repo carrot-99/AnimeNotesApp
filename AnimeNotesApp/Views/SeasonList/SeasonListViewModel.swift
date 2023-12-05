@@ -23,9 +23,12 @@ class SeasonListViewModel: ObservableObject {
     
     init() {
         generateSeasonsList()
+        self.selectedSeason = nil // 明示的にnilを設定
+        print("SeasonListViewModelが初期化されました。selectedSeason: \(String(describing: self.selectedSeason))")
     }
     
     func viewModelForSeason(_ season: String) -> AnimeListViewModel {
+        print("viewModelForSeason season:\(season)")
         if let viewModel = animeListViewModels[season] {
             return viewModel
         } else {
@@ -36,6 +39,7 @@ class SeasonListViewModel: ObservableObject {
     }
     
     private func generateSeasonsList() {
+        print("generateSeasonsList")
         let seasonsOrder = ["冬", "春", "夏", "秋"]
 
         for year in (1940...2023).reversed() {
@@ -62,13 +66,15 @@ class SeasonListViewModel: ObservableObject {
 extension SeasonListViewModel {
     
     func selectSeason(_ season: String) {
-        print("selectSeasonが呼び出されました。シーズン: \(season)")
-        guard self.selectedSeason != season else { return }
+        guard selectedSeason == nil, self.selectedSeason != season else {
+            return
+        }
         self.selectedSeason = season
         fetchDataForSelectedSeason()
     }
 
     private func fetchDataForSelectedSeason() {
+        print("fetchDataForSelectedSeason")
         guard let season = selectedSeason else { return }
         let viewModel = viewModelForSeason(season)
         viewModel.fetchDataForSeason()
@@ -83,6 +89,7 @@ extension SeasonListViewModel {
     }
 
     func resetNavigationState() {
+        print("resetNavigationState")
         selectedSeason = nil
         selectedAnimeListViewModel = nil
         navigateToAnimeList = false

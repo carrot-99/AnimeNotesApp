@@ -4,6 +4,7 @@ import SwiftUI
 
 struct AccountInfoView: View {
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
+    @State private var isEditing = false
 
     var body: some View {
         List {
@@ -19,17 +20,19 @@ struct AccountInfoView: View {
                             .foregroundColor(.gray)
                         Text("\(user.username ?? "未設定")")
                     }
-                    HStack {
-                        Image(systemName: "calendar")
-                            .foregroundColor(.gray)
-                        Text("\(user.age.map(String.init) ?? "未設定")")
-                    }
                 }
                 Section {
-                    NavigationLink(destination: EditAccountInfoView()) {
-                        Text("アカウント情報の編集")
-                            .foregroundColor(.blue)
+                    Button("アカウント情報の編集") {
+                        isEditing = true
                     }
+                    .background(
+                        NavigationLink(
+                            destination: EditAccountInfoView(),
+                            isActive: $isEditing,
+                            label: { EmptyView() }
+                        )
+                        .hidden()
+                    )
                 }
             } else {
                 Text("ユーザー情報が取得できませんでした。")

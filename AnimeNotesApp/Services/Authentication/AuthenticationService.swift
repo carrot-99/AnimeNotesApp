@@ -36,8 +36,7 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
                     let userDocumentRef = self.db.collection("users").document(user.uid)
                     let userData = UserCreationData(
                         email: email,
-                        username: "New User",
-                        age: 0
+                        username: "New User"
                     )
                     
                     self.setData(userDocumentRef, for: userData)
@@ -100,8 +99,7 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
                     let userModel = UserModel(
                         uid: userId,
                         email: data["email"] as? String,
-                        username: data["username"] as? String,
-                        age: data["age"] as? Int
+                        username: data["username"] as? String
                     )
                     promise(.success(userModel))
                 } else {
@@ -120,7 +118,38 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
     struct UserCreationData: Encodable {
         let email: String
         let username: String
-        let age: Int
+    }
+    
+    func deleteUser() -> AnyPublisher<Void, Error> {
+        Future<Void, Error> { promise in
+            guard let user = self.auth.currentUser else {
+                promise(.failure(NSError(domain: "FirebaseAuthError", code: 0, userInfo: nil)))
+                return
+            }
+
+            user.delete { error in
+                if let error = error {
+                    promise(.failure(error))
+                } else {
+                    promise(.success(()))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    func reauthenticate(email: String, password: String) -> AnyPublisher<Void, Error> {
+        Future<Void, Error> { promise in
+            let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+            self.auth.currentUser?.reauthenticate(with: credential) { _, error in
+                if let error = error {
+                    promise(.failure(error))
+                } else {
+                    promise(.success(()))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
     }
 }
 

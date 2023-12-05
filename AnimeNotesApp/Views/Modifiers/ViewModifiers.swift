@@ -20,3 +20,19 @@ extension View {
         self.modifier(FlatTextField())
     }
 }
+
+// SecureTextField ViewModifier
+struct SecureTextField: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .textContentType(.oneTimeCode)
+            .autocapitalization(.none)
+    }
+}
+
+// SecureTextFieldの拡張
+extension View {
+    func secureTextFieldStyle() -> some View {
+        self.modifier(SecureTextField())
+    }
+}

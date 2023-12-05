@@ -4,10 +4,11 @@ import SwiftUI
 
 struct MainTabView: View {
     @EnvironmentObject var userSessionVM: UserSessionViewModel
+    @StateObject var seasonListVM = SeasonListViewModel()
     
     var body: some View {
         TabView {
-            SeasonListView(seasonListVM: SeasonListViewModel())
+            SeasonListView(seasonListVM: seasonListVM)
                 .tabItem {
                     Label("リスト", systemImage: "list.dash")
                 }
@@ -26,6 +27,9 @@ struct MainTabView: View {
                 .tabItem {
                     Label("設定", systemImage: "gear")
                 }
+        }
+        .onAppear {
+            seasonListVM.resetNavigationState()
         }
     }
 }
