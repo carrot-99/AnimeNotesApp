@@ -84,22 +84,15 @@ class UserSessionViewModel: ObservableObject {
     }
     
     func fetchCurrentUser() {
-        guard let firebaseUser = Auth.auth().currentUser else {
+        guard let firebaseUser = authService.currentUser else {
             print("現在のFirebaseユーザーが存在しません。")
             return
         }
-
-        // ユーザー情報を更新
-        firebaseUser.reload { [weak self] error in
-            if let error = error {
-                print("ユーザー情報の更新エラー: \(error.localizedDescription)")
-            } else {
-                // 更新されたユーザー情報を取得
-                let user = UserModel(uid: firebaseUser.uid, email: firebaseUser.email)
-                self?.currentUser = user
-                self?.isEmailVerified = firebaseUser.isEmailVerified
-            }
-        }
+        let user = UserModel(uid: firebaseUser.uid, email: firebaseUser.email)
+        currentUser = user
+        print("現在のユーザー: \(String(describing: currentUser))")
+        fetchAdditionalUserInfo(uid: firebaseUser.uid)
+        isEmailVerified = firebaseUser.isEmailVerified
     }
         
     private func fetchAdditionalUserInfo(uid: String) {
@@ -169,6 +162,7 @@ class UserSessionViewModel: ObservableObject {
             print("エラー: メールアドレスが利用できません。")
             return
         }
+        print("再認証を試みるメールアドレス: \(email)")
 
         authService.reauthenticate(email: email, password: password)
             .flatMap { [weak self] _ -> AnyPublisher<Void, Error> in

@@ -5,7 +5,6 @@ import SwiftUI
 
 struct EmailVerificationView: View {
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
-    @Environment(\.presentationMode) var presentationMode
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -15,13 +14,6 @@ struct EmailVerificationView: View {
                 userSessionViewModel.resendVerificationEmail()
             }
             .padding()
-            
-            // 前の画面に戻るボタン
-            Button("メールアドレスを修正する") {
-                presentationMode.wrappedValue.dismiss()
-            }
-            .padding()
-            
             if let message = userSessionViewModel.updateSuccessMessage {
                 Text(message)
                     .foregroundColor(.green)

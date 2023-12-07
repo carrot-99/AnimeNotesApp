@@ -14,7 +14,8 @@ struct AnimeNotesApp: App {
                 .onAppear {
                     NotificationCenter.default.addObserver(
                         forName: .firebaseAuthenticationDidChange,
-                        object: nil, queue: .main
+                        object: nil, 
+                        queue: .main
                     ) { notification in
                         if let isAuthenticated = notification.object as? Bool {
                             userSessionViewModel.isUserAuthenticated = isAuthenticated
