@@ -43,39 +43,21 @@ struct CreateAccountView: View {
     }
 
     private func validateInputs() -> Bool {
-        // メールアドレス形式のチェック
-        if !isValidEmail(email) {
+        if !Validation.isValidEmail(email) {
             alertMessage = "無効なメールアドレスです。"
             return false
         }
 
-        // パスワードの文字数チェック
-        if password.count < 8 {
-            alertMessage = "パスワードは8文字以上である必要があります。"
+        if !Validation.isValidPassword(password) {
+            alertMessage = "パスワードは8文字以上であり、英字と数字を含む必要があります。"
             return false
         }
 
-        // 英字と数字が含まれているかチェック
-        let containsLetter = password.range(of: "[a-zA-Z]", options: .regularExpression) != nil
-        let containsDigit = password.range(of: "\\d", options: .regularExpression) != nil
-
-        if !containsLetter || !containsDigit {
-            alertMessage = "パスワードは英字と数字を含む必要があります。"
-            return false
-        }
-
-        // パスワードと確認用パスワードが一致するかチェック
-        if password != confirmPassword {
+        if !Validation.passwordsMatch(password, confirmPassword) {
             alertMessage = "パスワードが一致しません。"
             return false
         }
 
         return true
-    }
-    
-    private func isValidEmail(_ email: String) -> Bool {
-        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-        return emailTest.evaluate(with: email)
     }
 }

@@ -31,6 +31,10 @@ struct SettingsView: View {
                         )
                     }
                     
+                    if userSessionViewModel.isLoading {
+                        ProgressView("処理中...")
+                    }
+                    
                     Button(action: {
                         self.showingPasswordPrompt = true
                     }) {

@@ -67,6 +67,9 @@ class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
                     promise(.failure(error))
                 } else if let user = result?.user {
                     promise(.success(user))
+                } else {
+                    let error = NSError(domain: "AuthServiceError", code: -1, userInfo: [NSLocalizedDescriptionKey: "不明なエラーが発生しました。"])
+                    promise(.failure(error))
                 }
             }
         }

@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class UserSessionViewModel: ObservableObject {
     @Published var isUserAuthenticated = false
@@ -11,11 +12,29 @@ class UserSessionViewModel: ObservableObject {
     @Published var currentUser: UserModel?
     @Published var updateSuccessMessage: String?
     @Published var isUpdateSuccessful = false
+    @Published var isDeletingAccount = false
+    @Published var isEmailVerified = false
     private var cancellables: Set<AnyCancellable> = []
     private let authService: AuthenticationServiceProtocol
+    private var authStateDidChangeListenerHandle: AuthStateDidChangeListenerHandle?
 
     init(authService: AuthenticationServiceProtocol = AuthenticationService()) {
         self.authService = authService
+        setupAuthStateListener()
+    }
+    
+    private func setupAuthStateListener() {
+        authStateDidChangeListenerHandle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
+            guard let self = self else { return }
+            if let user = user {
+                self.currentUser = UserModel(uid: user.uid, email: user.email)
+                self.isEmailVerified = user.isEmailVerified
+                self.isUserAuthenticated = true
+            } else {
+                self.isUserAuthenticated = false
+                self.currentUser = nil
+            }
+        }
     }
     
     func createAccount(email: String, password: String) {
@@ -28,7 +47,7 @@ class UserSessionViewModel: ObservableObject {
                     self?.handleError(error)
                 }
             }, receiveValue: { [weak self] user in
-                self?.updateSuccessMessage = "アカウントが作成されました。確認メールをご確認ください。"
+                self?.updateSuccessMessage = "アカウントが作成されました。認証メールをご確認ください。"
                 self?.isUserAuthenticated = true
                 self?.clearErrorMessage()
             })
@@ -65,14 +84,22 @@ class UserSessionViewModel: ObservableObject {
     }
     
     func fetchCurrentUser() {
-        guard let firebaseUser = authService.currentUser else {
+        guard let firebaseUser = Auth.auth().currentUser else {
             print("現在のFirebaseユーザーが存在しません。")
             return
         }
-        let user = UserModel(uid: firebaseUser.uid, email: firebaseUser.email)
-        currentUser = user
-        print("現在のユーザー: \(String(describing: currentUser))")
-        fetchAdditionalUserInfo(uid: firebaseUser.uid)
+
+        // ユーザー情報を更新
+        firebaseUser.reload { [weak self] error in
+            if let error = error {
+                print("ユーザー情報の更新エラー: \(error.localizedDescription)")
+            } else {
+                // 更新されたユーザー情報を取得
+                let user = UserModel(uid: firebaseUser.uid, email: firebaseUser.email)
+                self?.currentUser = user
+                self?.isEmailVerified = firebaseUser.isEmailVerified
+            }
+        }
     }
         
     private func fetchAdditionalUserInfo(uid: String) {
@@ -116,17 +143,32 @@ class UserSessionViewModel: ObservableObject {
     }
     
     private func handleError(_ error: Error) {
-        self.errorMessage = error.localizedDescription
+        let nsError = error as NSError
+        if let errCode = AuthErrorCode.Code(rawValue: nsError.code) {
+            switch errCode {
+            case .networkError:
+                errorMessage = "ネットワークエラーが発生しました。接続を確認してください。"
+            case .wrongPassword:
+                errorMessage = "間違ったパスワードです。"
+            case .userNotFound:
+                errorMessage = "ユーザーが見つかりません。"
+            case .userDisabled:
+                errorMessage = "このアカウントは無効です。"
+            default:
+                errorMessage = "ログインに失敗しました。入力情報を確認してください。"
+            }
+        } else {
+            errorMessage = "エラーが発生しました。もう一度お試しください。"
+        }
     }
 
-    
     func attemptToDeleteAccount(password: String) {
+        isDeletingAccount = true
         guard let currentUser = currentUser, let email = currentUser.email else {
             self.errorMessage = "メールアドレスが利用できません。"
             print("エラー: メールアドレスが利用できません。")
             return
         }
-        print("再認証を試みるメールアドレス: \(email)")
 
         authService.reauthenticate(email: email, password: password)
             .flatMap { [weak self] _ -> AnyPublisher<Void, Error> in
@@ -209,5 +251,19 @@ extension UserSessionViewModel {
                 // メール送信成功メッセージなど
             })
             .store(in: &cancellables)
+    }
+    
+    func resendVerificationEmail() {
+        guard let firebaseUser = Auth.auth().currentUser, !firebaseUser.isEmailVerified else {
+            return
+        }
+
+        firebaseUser.sendEmailVerification { [weak self] error in
+            if let error = error {
+                self?.errorMessage = "メール送信に失敗しました: \(error.localizedDescription)"
+            } else {
+                self?.updateSuccessMessage = "認証メールを再送しました。メールをご確認ください。"
+            }
+        }
     }
 }

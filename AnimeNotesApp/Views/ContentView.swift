@@ -11,14 +11,13 @@ struct ContentView: View {
         if !isTermsAgreed {
             TermsAgreementView(isTermsAgreed: $isTermsAgreed)
         } else if userSessionViewModel.isUserAuthenticated {
-            MainTabView()
+            if userSessionViewModel.isEmailVerified {
+                MainTabView()
+            } else {
+                EmailVerificationView()
+            }
         } else {
             LoginView()
         }
-        
-        // デバッグ用のリセットボタン
-//        Button("同意をリセット") {
-//            isTermsAgreed = false
-//        }
     }
 }

@@ -27,6 +27,8 @@
 		CE6F0A202B103146000F681D /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A1F2B103146000F681D /* SearchBarView.swift */; };
 		CE6F0A222B103172000F681D /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A212B103172000F681D /* SearchResultsView.swift */; };
 		CE6F0A242B105B89000F681D /* AnimeListViewComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6F0A232B105B89000F681D /* AnimeListViewComponent.swift */; };
+		CE7DEEFD2B2048E10036E2C2 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DEEFC2B2048E10036E2C2 /* Validation.swift */; };
+		CE7DEEFF2B2094C10036E2C2 /* EmailVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DEEFE2B2094C10036E2C2 /* EmailVerificationView.swift */; };
 		CE8EC16C2AFF4F3E003F6BDF /* StatusSelectionModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC16B2AFF4F3E003F6BDF /* StatusSelectionModalView.swift */; };
 		CE8EC16E2AFF9597003F6BDF /* AnimeDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC16D2AFF9597003F6BDF /* AnimeDetailViewModel.swift */; };
 		CE8EC1702B00B2A9003F6BDF /* SeasonUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8EC16F2B00B2A9003F6BDF /* SeasonUtility.swift */; };
@@ -120,6 +122,8 @@
 		CE6F0A1F2B103146000F681D /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		CE6F0A212B103172000F681D /* SearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
 		CE6F0A232B105B89000F681D /* AnimeListViewComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeListViewComponent.swift; sourceTree = "<group>"; };
+		CE7DEEFC2B2048E10036E2C2 /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
+		CE7DEEFE2B2094C10036E2C2 /* EmailVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailVerificationView.swift; sourceTree = "<group>"; };
 		CE8EC16B2AFF4F3E003F6BDF /* StatusSelectionModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusSelectionModalView.swift; sourceTree = "<group>"; };
 		CE8EC16D2AFF9597003F6BDF /* AnimeDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeDetailViewModel.swift; sourceTree = "<group>"; };
 		CE8EC16F2B00B2A9003F6BDF /* SeasonUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonUtility.swift; sourceTree = "<group>"; };
@@ -402,22 +406,6 @@
 			path = Modifiers;
 			sourceTree = "<group>";
 		};
-		CE8EC18F2B04BCCE003F6BDF /* Login */ = {
-			isa = PBXGroup;
-			children = (
-				CEF704252AF76B2800FD83DF /* LoginView.swift */,
-			);
-			path = Login;
-			sourceTree = "<group>";
-		};
-		CE8EC1902B04BCE2003F6BDF /* CreateAccount */ = {
-			isa = PBXGroup;
-			children = (
-				CEF7042B2AF7757B00FD83DF /* CreateAccountView.swift */,
-			);
-			path = CreateAccount;
-			sourceTree = "<group>";
-		};
 		CE8EC1912B04BD0F003F6BDF /* SeasonList */ = {
 			isa = PBXGroup;
 			children = (
@@ -522,8 +510,12 @@
 		CEF9532F2B16EC8100CA85B2 /* AccountInfo */ = {
 			isa = PBXGroup;
 			children = (
+				CEF7042B2AF7757B00FD83DF /* CreateAccountView.swift */,
+				CEF704252AF76B2800FD83DF /* LoginView.swift */,
 				CEF953302B16ECA900CA85B2 /* AccountInfoView.swift */,
 				CEF953352B16EE1000CA85B2 /* EditAccountInfoView.swift */,
+				CE7DEEFC2B2048E10036E2C2 /* Validation.swift */,
+				CE7DEEFE2B2094C10036E2C2 /* EmailVerificationView.swift */,
 			);
 			path = AccountInfo;
 			sourceTree = "<group>";
@@ -551,8 +543,6 @@
 				CE6F0A192B085C39000F681D /* ContentView.swift */,
 				CE8FCBFB2AFB88210097D96B /* MainTabView.swift */,
 				CEF9532C2B15D99A00CA85B2 /* TermsAgreement */,
-				CE8EC18F2B04BCCE003F6BDF /* Login */,
-				CE8EC1902B04BCE2003F6BDF /* CreateAccount */,
 				CE8EC1912B04BD0F003F6BDF /* SeasonList */,
 				CE8EC1922B04BD42003F6BDF /* AnimeList */,
 				CE8EC1932B04BD5E003F6BDF /* AnimeDetail */,
@@ -836,6 +826,7 @@
 				CE6F0A202B103146000F681D /* SearchBarView.swift in Sources */,
 				CE6F0A242B105B89000F681D /* AnimeListViewComponent.swift in Sources */,
 				CEE200EA2AF63E52002BEE6E /* SeasonListViewModel.swift in Sources */,
+				CE7DEEFD2B2048E10036E2C2 /* Validation.swift in Sources */,
 				CEF953362B16EE1000CA85B2 /* EditAccountInfoView.swift in Sources */,
 				CE8EC1852B04B51A003F6BDF /* CustomTextField.swift in Sources */,
 				CE6F0A222B103172000F681D /* SearchResultsView.swift in Sources */,
@@ -848,6 +839,7 @@
 				CEF9533A2B18780600CA85B2 /* ViewModifiers.swift in Sources */,
 				CECF9E6B2B06411B000A5199 /* StatusCountView.swift in Sources */,
 				CEF953402B187DBB00CA85B2 /* ListItemView.swift in Sources */,
+				CE7DEEFF2B2094C10036E2C2 /* EmailVerificationView.swift in Sources */,
 				CE8EC16E2AFF9597003F6BDF /* AnimeDetailViewModel.swift in Sources */,
 				CEEAAFB62B05DE7A0023A896 /* UserEpisode.swift in Sources */,
 				CEE200EC2AF63E7D002BEE6E /* SeasonListView.swift in Sources */,
