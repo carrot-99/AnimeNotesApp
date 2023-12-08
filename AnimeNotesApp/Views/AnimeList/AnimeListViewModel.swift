@@ -5,11 +5,7 @@ import Combine
 import FirebaseAuth
 
 class AnimeListViewModel: BaseViewModel {
-    @Published var isLoading: Bool = false {
-        didSet {
-            print("isLoading changed to: \(isLoading)")
-        }
-    }
+    @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var showingError: Bool = false
     private var localCancellables = Set<AnyCancellable>()
@@ -18,36 +14,36 @@ class AnimeListViewModel: BaseViewModel {
     init(season: String, animeDataService: AnimeDataServiceProtocol = AnimeDataService()) {
         self.season = season
         super.init(animeDataService: animeDataService)
-        // フェッチロジックをここから削除
     }
     
-    func fetchDataForSeason() {
-//        print("fetchDataForSeasonが呼び出されました。シーズン: \(self.season)")
-        
+    func fetchDataForSeason(isAuthenticated: Bool) {
+        isLoading = true
         let components = SeasonUtility.parseSeasonComponents(from: self.season)
-        print("パースされたシーズンデータ: 年 - \(components.year), シーズン - \(components.season)")
-
         guard components.year > 0, !components.season.isEmpty else {
             self.errorMessage = "Invalid season data."
             self.showingError = true
-            print("エラー: 不正なシーズンデータ")
+            isLoading = false
             return
         }
 
-        self.fetchAnimes(seasonYear: components.year, season: components.season)
-    }
-    
-    private func parseSeasonAndFetchAnimes(season: String) {
-        let components = SeasonUtility.parseSeasonComponents(from: season)
-        guard components.year > 0, !components.season.isEmpty else {
-            self.errorMessage = "Invalid season data."
-            self.showingError = true
-            return
+        if isAuthenticated {
+            fetchAnimesForAuthenticatedUser(seasonYear: components.year, season: components.season)
+        } else {
+            fetchAnimesForUnauthenticatedUser(seasonYear: components.year, season: components.season)
         }
-        self.fetchAnimes(seasonYear: components.year, season: components.season)
     }
     
-    private func fetchAnimes(seasonYear: Int, season: String) {
+//    private func parseSeasonAndFetchAnimes(season: String) {
+//        let components = SeasonUtility.parseSeasonComponents(from: season)
+//        guard components.year > 0, !components.season.isEmpty else {
+//            self.errorMessage = "Invalid season data."
+//            self.showingError = true
+//            return
+//        }
+//        self.fetchAnimes(seasonYear: components.year, season: components.season)
+//    }
+    
+    private func fetchAnimesForAuthenticatedUser(seasonYear: Int, season: String) {
         isLoading = true
         animeDataService.fetchAnimes(seasonYear: seasonYear, season: season)
             .flatMap { [weak self] animes -> AnyPublisher<[UserAnime], Error> in
@@ -67,8 +63,33 @@ class AnimeListViewModel: BaseViewModel {
                     }
                 },
                 receiveValue: { [weak self] userAnimes in
-//                    print("フェッチされたアニメの数: \(userAnimes.count)")
                     self?.animes = userAnimes
+                }
+            )
+            .store(in: &localCancellables)
+    }
+    
+    private func fetchAnimesForUnauthenticatedUser(seasonYear: Int, season: String) {
+        animeDataService.fetchAnimes(seasonYear: seasonYear, season: season)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    self?.isLoading = false
+                    // ... エラーハンドリング
+                },
+                receiveValue: { [weak self] animes in
+                    self?.animes = animes.map { anime in
+                        UserAnime(
+                            id: "local-\(anime.id ?? "unknown")",
+                            user_id: "local",
+                            anime_id: Int(anime.id ?? "0") ?? 0,
+                            title: anime.title.native,
+                            episodes: anime.episodes,
+                            season: anime.season,
+                            seasonYear: anime.seasonYear,
+                            status: 0
+                        )
+                    }
                 }
             )
             .store(in: &localCancellables)

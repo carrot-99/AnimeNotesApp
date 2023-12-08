@@ -20,6 +20,16 @@ struct AccountInfoView: View {
                             .foregroundColor(.gray)
                         Text("\(user.username ?? "未設定")")
                     }
+                    HStack {
+                        Image(systemName: "checkmark.circle")
+                            .foregroundColor(userSessionViewModel.isEmailVerified ? .green : .gray)
+                        Text(userSessionViewModel.isEmailVerified ? "メールアドレス認証済み" : "メールアドレス未認証")
+                    }
+                    if !userSessionViewModel.isEmailVerified {
+                        Button("認証メール再送") {
+                            userSessionViewModel.resendVerificationEmail()
+                        }
+                    }
                 }
                 Section {
                     Button("アカウント情報の編集") {
@@ -39,8 +49,14 @@ struct AccountInfoView: View {
             }
         }
         .navigationBarTitle("アカウント情報")
+        .navigationBarItems(trailing: Button(action: {
+            userSessionViewModel.fetchCurrentUser()
+        }) {
+            Image(systemName: "arrow.clockwise")
+        })
         .onAppear {
             userSessionViewModel.fetchCurrentUser()
+            print("AccountInfoView appeared. isEmailVerified: \(userSessionViewModel.isEmailVerified)")
         }
     }
 }

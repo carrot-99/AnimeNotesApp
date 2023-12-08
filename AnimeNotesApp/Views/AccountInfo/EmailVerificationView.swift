@@ -5,7 +5,7 @@ import SwiftUI
 
 struct EmailVerificationView: View {
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+//    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     var body: some View {
         VStack {
@@ -23,9 +23,9 @@ struct EmailVerificationView: View {
                     .foregroundColor(.red)
             }
         }
-        .onReceive(timer) { _ in
-            userSessionViewModel.fetchCurrentUser()
-        }
+//        .onReceive(timer) { _ in
+//            userSessionViewModel.fetchCurrentUser()
+//        }
         .padding()
     }
 }

@@ -14,11 +14,12 @@ struct AnimeNotesApp: App {
                 .onAppear {
                     NotificationCenter.default.addObserver(
                         forName: .firebaseAuthenticationDidChange,
-                        object: nil, 
+                        object: nil,
                         queue: .main
                     ) { notification in
                         if let isAuthenticated = notification.object as? Bool {
                             userSessionViewModel.isUserAuthenticated = isAuthenticated
+                            print("Authentication status changed: \(isAuthenticated)")  // 状態変更をログで確認
                         }
                     }
                 }

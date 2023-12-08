@@ -14,6 +14,8 @@ class UserSessionViewModel: ObservableObject {
     @Published var isUpdateSuccessful = false
     @Published var isDeletingAccount = false
     @Published var isEmailVerified = false
+    @Published var isUsingAppWithoutAccount = false
+    @Published var isAccountDeletionSuccessful = false
     private var cancellables: Set<AnyCancellable> = []
     private let authService: AuthenticationServiceProtocol
     private var authStateDidChangeListenerHandle: AuthStateDidChangeListenerHandle?
@@ -27,15 +29,23 @@ class UserSessionViewModel: ObservableObject {
         authStateDidChangeListenerHandle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
             guard let self = self else { return }
             if let user = user {
-                self.currentUser = UserModel(uid: user.uid, email: user.email)
-                self.isEmailVerified = user.isEmailVerified
-                self.isUserAuthenticated = true
+                user.reload { error in
+                    if let error = error {
+                        print("Error reloading user: \(error)")
+                    } else {
+                        self.currentUser = UserModel(uid: user.uid, email: user.email)
+                        self.isEmailVerified = user.isEmailVerified
+                        self.isUserAuthenticated = true
+                        print("User isEmailVerified status: \(self.isEmailVerified)")  // 状態をログで確認
+                    }
+                }
             } else {
                 self.isUserAuthenticated = false
                 self.currentUser = nil
             }
         }
     }
+
     
     func createAccount(email: String, password: String) {
         isLoading = true
@@ -59,6 +69,7 @@ class UserSessionViewModel: ObservableObject {
         authService.signIn(email: email, password: password)
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: { [weak self] completion in
+                self?.clearErrorMessage()
                 self?.isLoading = false
                 if case let .failure(error) = completion {
                     self?.handleError(error)
@@ -74,6 +85,7 @@ class UserSessionViewModel: ObservableObject {
         authService.signOut()
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: { [weak self] completion in
+                self?.clearErrorMessage()
                 if case let .failure(error) = completion {
                     self?.handleError(error)
                 }
@@ -81,30 +93,6 @@ class UserSessionViewModel: ObservableObject {
                 self?.isUserAuthenticated = false
             })
             .store(in: &cancellables)
-    }
-    
-    func fetchCurrentUser() {
-        guard let firebaseUser = authService.currentUser else {
-            print("現在のFirebaseユーザーが存在しません。")
-            return
-        }
-        let user = UserModel(uid: firebaseUser.uid, email: firebaseUser.email)
-        currentUser = user
-        print("現在のユーザー: \(String(describing: currentUser))")
-        fetchAdditionalUserInfo(uid: firebaseUser.uid)
-        isEmailVerified = firebaseUser.isEmailVerified
-    }
-        
-    private func fetchAdditionalUserInfo(uid: String) {
-        let docRef = Firestore.firestore().collection("users").document(uid)
-        docRef.getDocument { [weak self] (document, error) in
-            if let document = document, document.exists {
-                let data = document.data()
-                let username = data?["username"] as? String
-                self?.currentUser?.username = username
-            } else {
-            }
-        }
     }
     
     func updateUserInfo(updatedUser: UserModel) {
@@ -125,13 +113,16 @@ class UserSessionViewModel: ObservableObject {
                         self?.updateSuccessMessage = "アカウント情報が更新されました。"
                         self?.isUpdateSuccessful = true
                     }
+                    if case .finished = completion {
+                        self?.fetchCurrentUser() // ユーザー情報の更新後に最新情報を取得
+                    }
                 },
                 receiveValue: { _ in }
             )
             .store(in: &cancellables)
     }
     
-    private func clearErrorMessage() {
+    func clearErrorMessage() {
         errorMessage = nil
     }
     
@@ -179,11 +170,12 @@ class UserSessionViewModel: ObservableObject {
             }
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
+                self?.clearErrorMessage()
                 switch completion {
                 case .failure(let error):
                     self?.errorMessage = "再認証または削除中にエラーが発生しました: \(error.localizedDescription)"
                 case .finished:
-                    break
+                    self?.isAccountDeletionSuccessful = true
                 }
             }, receiveValue: { [weak self] _ in
                 self?.isUserAuthenticated = false
@@ -249,6 +241,7 @@ extension UserSessionViewModel {
     
     func resendVerificationEmail() {
         guard let firebaseUser = Auth.auth().currentUser, !firebaseUser.isEmailVerified else {
+            errorMessage = "ユーザーは既にメール認証済み、またはログインしていません。"
             return
         }
 
@@ -257,6 +250,39 @@ extension UserSessionViewModel {
                 self?.errorMessage = "メール送信に失敗しました: \(error.localizedDescription)"
             } else {
                 self?.updateSuccessMessage = "認証メールを再送しました。メールをご確認ください。"
+            }
+        }
+    }
+    
+    func fetchCurrentUser() {
+        guard let firebaseUser = Auth.auth().currentUser else {
+            print("現在のFirebaseユーザーが存在しません。")
+            return
+        }
+
+        firebaseUser.reload { [weak self] error in  // 最新のユーザー情報を取得
+            guard let self = self else { return }
+
+            if let error = error {
+                print("Error reloading user: \(error)")
+            } else {
+                self.currentUser = UserModel(uid: firebaseUser.uid, email: firebaseUser.email)
+                self.isEmailVerified = firebaseUser.isEmailVerified
+//                print("Updated isEmailVerified: \(self.isEmailVerified)")
+                fetchAdditionalUserInfo(uid: firebaseUser.uid)
+            }
+        }
+    }
+
+    private func fetchAdditionalUserInfo(uid: String) {
+        let docRef = Firestore.firestore().collection("users").document(uid)
+        docRef.getDocument { [weak self] (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                let username = data?["username"] as? String
+                self?.currentUser?.username = username
+            } else {
+                print("Firestoreからの追加ユーザー情報の取得に失敗しました。")
             }
         }
     }

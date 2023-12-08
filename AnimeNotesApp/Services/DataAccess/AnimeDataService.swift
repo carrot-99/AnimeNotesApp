@@ -19,7 +19,7 @@ class AnimeDataService: FirestoreService, AnimeDataServiceProtocol {
             episodes: anime.episodes,
             season: anime.season,
             seasonYear: anime.seasonYear,
-            status: 0 // 初期ステータス
+            status: 0
         )
         let documentRef = db.collection("userWatchingHistory").document(userAnime.id)
         return setData(documentRef, for: userAnime)
@@ -40,7 +40,7 @@ class AnimeDataService: FirestoreService, AnimeDataServiceProtocol {
         return updateData(documentRef, data: ["status": newStatus])
     }
     
-    func searchAnimesByTitle(userId: String, title: String) -> AnyPublisher<[UserAnime], Error> {
+    func searchAnimesByTitleForAuthenticatedUser(userId: String, title: String) -> AnyPublisher<[UserAnime], Error> {
         let query = db.collection("animes")
             .whereField("title.native", isGreaterThanOrEqualTo: title)
             .whereField("title.native", isLessThanOrEqualTo: title + "\u{f8ff}")
@@ -56,6 +56,13 @@ class AnimeDataService: FirestoreService, AnimeDataServiceProtocol {
             
             return Publishers.MergeMany(userAnimeQueries).collect().eraseToAnyPublisher()
         }.eraseToAnyPublisher()
+    }
+    
+    func searchAnimesByTitleForUnauthenticatedUser(title: String) -> AnyPublisher<[Anime], Error> {
+        let query = db.collection("animes")
+            .whereField("title.native", isGreaterThanOrEqualTo: title)
+            .whereField("title.native", isLessThanOrEqualTo: title + "\u{f8ff}")
+        return performQuery(query, decodingType: Anime.self)
     }
     
     func fetchUserAnime(for anime: Anime, userId: String) -> AnyPublisher<UserAnime, Error> {

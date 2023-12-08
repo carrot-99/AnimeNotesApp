@@ -8,6 +8,8 @@ struct LoginView: View {
     @State private var password = ""
     @State private var alertMessage = ""
     @State private var showingAlert = false
+    @State private var navigateToCreateAccount = false
+    @State private var showingPasswordResetModal = false
     @EnvironmentObject var userSessionViewModel: UserSessionViewModel
     
     var body: some View {
@@ -38,15 +40,32 @@ struct LoginView: View {
                     }
                 }
                 Button("パスワードを忘れた場合") {
-                    userSessionViewModel.resetPassword(email: email)
+                    showingPasswordResetModal = true
                 }
                 .foregroundColor(.blue)
-                NavigationLink("新規アカウント作成", destination: CreateAccountView())
-                    .foregroundColor(.blue)
+                Button("新規アカウント作成") {
+                    navigateToCreateAccount = true
+                    userSessionViewModel.clearErrorMessage()
+                }
+                .foregroundColor(.blue)
+
+                Button("アカウントを作成せずに利用する") {
+                    userSessionViewModel.isUsingAppWithoutAccount = true
+//                    userSessionViewModel.isEmailVerified = true
+                }
+                .foregroundColor(.blue)
             }
             .padding()
             .navigationTitle("ログイン")
             .dismissKeyboardOnTap()
+            .sheet(isPresented: $navigateToCreateAccount) {
+                CreateAccountView()
+                    .environmentObject(userSessionViewModel)
+            }
+            .sheet(isPresented: $showingPasswordResetModal) {
+                PasswordResetModalView(isPresented: $showingPasswordResetModal)
+                    .environmentObject(userSessionViewModel) 
+            }
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

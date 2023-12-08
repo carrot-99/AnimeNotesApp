@@ -5,6 +5,7 @@ import Combine
 
 class SearchViewModel: ObservableObject {
     @Published var searchResults: [UserAnime] = []
+    @Published var searchResultsForUnauthenticatedUser: [Anime] = []
     @Published var isLoading = false
     @Published var hasSearched = false
     @Published var selectedAnime: UserAnime?
@@ -22,7 +23,7 @@ class SearchViewModel: ObservableObject {
         self.authenticationService = authenticationService
     }
     
-    func searchAnimeByTitle(title: String) {
+    func searchAnimeByTitleForAuthenticatedUser(title: String) {
         isLoading = true
         hasSearched = true
         searchResults.removeAll()
@@ -30,7 +31,7 @@ class SearchViewModel: ObservableObject {
         let userId = authenticationService.currentUserId
         guard !userId.isEmpty else { return }
 
-        animeDataService.searchAnimesByTitle(userId: userId, title: title)
+        animeDataService.searchAnimesByTitleForAuthenticatedUser(userId: userId, title: title)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 guard let self = self else { return }
@@ -41,6 +42,34 @@ class SearchViewModel: ObservableObject {
             }, receiveValue: { [weak self] userAnimes in
                 guard let self = self else { return }
                 self.searchResults = userAnimes.sorted(by: { $0.title < $1.title })
+            })
+            .store(in: &cancellables)
+    }
+    
+    func searchAnimeByTitleForUnauthenticatedUser(title: String) {
+        isLoading = true
+        hasSearched = true
+        searchResults.removeAll()
+        
+        animeDataService.searchAnimesByTitleForUnauthenticatedUser(title: title)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
+                self.isLoading = false
+                if case .failure(let error) = completion {
+                    print("Error searching anime: \(error.localizedDescription)")
+                }
+            }, receiveValue: { [weak self] animes in
+                guard let self = self else { return }
+                self.searchResultsForUnauthenticatedUser = animes.map { anime in
+                    Anime(
+                        id: anime.id,
+                        title: anime.title,
+                        seasonYear: anime.seasonYear,
+                        season: anime.season,
+                        episodes: anime.episodes
+                    )
+                }
             })
             .store(in: &cancellables)
     }

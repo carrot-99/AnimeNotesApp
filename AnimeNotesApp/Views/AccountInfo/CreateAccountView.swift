@@ -15,6 +15,9 @@ struct CreateAccountView: View {
             CustomTextField(placeholder: "メールアドレス(user@example.com)", text: $email)
             CustomTextField(placeholder: "パスワード(英字と数字を含む8文字以上)", text: $password, isSecure: true)
             CustomTextField(placeholder: "パスワード確認", text: $confirmPassword, isSecure: true)
+            Text("アカウント作成時、登録されたアドレスに認証メールが送信されます。")
+            Text("※誤ったアドレスで登録してしまうと、一部機能が制限される場合があります。")
+                .foregroundColor(.red)
 
             if let errorMessage = userSessionViewModel.errorMessage {
                 Text(errorMessage)
@@ -39,6 +42,7 @@ struct CreateAccountView: View {
             }
         }
         .padding()
+        .navigationTitle("アカウント作成")
         .dismissKeyboardOnTap()
     }
 

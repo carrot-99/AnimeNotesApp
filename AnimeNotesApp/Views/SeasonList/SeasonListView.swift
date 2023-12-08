@@ -3,19 +3,20 @@
 import SwiftUI
 
 struct SeasonListView: View {
+    @EnvironmentObject var userSessionViewModel: UserSessionViewModel
     @StateObject var seasonListVM: SeasonListViewModel
 
     var body: some View {
         NavigationView {
             List(seasonListVM.seasons, id: \.self) { season in
                 Button(action: {
-                    seasonListVM.selectSeason(season)
+                    seasonListVM.selectSeason(season, isAuthenticated: userSessionViewModel.isUserAuthenticated)
                 }) {
                     ListItemView(title: season, iconName: nil)
                 }
                 .background(
                     NavigationLink(
-                        destination: seasonListVM.selectedAnimeListViewModel.map { AnimeListView(viewModel: $0) },
+                        destination: seasonListVM.selectedAnimeListViewModel.map { AnimeListView(animeListviewModel: $0) },
                         isActive: Binding<Bool>(
                             get: { seasonListVM.selectedSeason == season },
                             set: { _ in }

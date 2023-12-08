@@ -10,14 +10,12 @@ struct ContentView: View {
     var body: some View {
         if !isTermsAgreed {
             TermsAgreementView(isTermsAgreed: $isTermsAgreed)
-        } else if userSessionViewModel.isUserAuthenticated {
-            if userSessionViewModel.isEmailVerified {
+        } else {
+            if userSessionViewModel.isUserAuthenticated || userSessionViewModel.isUsingAppWithoutAccount {
                 MainTabView()
             } else {
-                EmailVerificationView()
+                LoginView()
             }
-        } else {
-            LoginView()
         }
     }
 }

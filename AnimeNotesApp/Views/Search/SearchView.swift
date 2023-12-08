@@ -5,13 +5,18 @@ import FirebaseAuth
 
 struct SearchView: View {
     @ObservedObject private var searchVM = SearchViewModel()
+    @EnvironmentObject var userSessionViewModel: UserSessionViewModel
     @State private var searchText = ""
 
     var body: some View {
         NavigationView {
             VStack {
                 SearchBarView(searchText: $searchText, onSearch: {
-                    searchVM.searchAnimeByTitle(title: searchText)
+                    if userSessionViewModel.isUserAuthenticated {
+                        searchVM.searchAnimeByTitleForAuthenticatedUser(title: searchText)
+                    } else {
+                        searchVM.searchAnimeByTitleForUnauthenticatedUser(title: searchText)
+                    }
                 })
                 
                 if searchVM.isLoading {

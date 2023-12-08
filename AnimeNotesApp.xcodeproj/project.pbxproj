@@ -10,6 +10,7 @@
 		2B49414DAC73E4EF4D7AF3E2 /* Pods_AnimeNotesApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B96C4EBE5A8A28AB5E45074 /* Pods_AnimeNotesApp.framework */; };
 		522AD5D17EC4F9A6FAB6E61A /* Pods_AnimeNotesAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D59BAEFFC2F6F0A33659446F /* Pods_AnimeNotesAppTests.framework */; };
 		B50AA492B78871CB2BAB7772 /* Pods_AnimeNotesApp_AnimeNotesAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAACD9D3F064DB87E35FBB4 /* Pods_AnimeNotesApp_AnimeNotesAppUITests.framework */; };
+		CE45C1872B22E52700FDB613 /* PasswordResetModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE45C1862B22E52700FDB613 /* PasswordResetModalView.swift */; };
 		CE6C086C2AF4DFFE0036310C /* AnimeNotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C086B2AF4DFFE0036310C /* AnimeNotesApp.swift */; };
 		CE6C08702AF4DFFF0036310C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE6C086F2AF4DFFF0036310C /* Assets.xcassets */; };
 		CE6C087D2AF4DFFF0036310C /* AnimeNotesAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C087C2AF4DFFF0036310C /* AnimeNotesAppTests.swift */; };
@@ -102,6 +103,7 @@
 		85A85AE3EE0E141A6C93A063 /* Pods-AnimeNotesAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesAppTests.debug.xcconfig"; path = "Target Support Files/Pods-AnimeNotesAppTests/Pods-AnimeNotesAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B52DE1F81CE91A957F440AC8 /* Pods-AnimeNotesApp-AnimeNotesAppUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesApp-AnimeNotesAppUITests.debug.xcconfig"; path = "Target Support Files/Pods-AnimeNotesApp-AnimeNotesAppUITests/Pods-AnimeNotesApp-AnimeNotesAppUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		C86A89DB2E64F2B80FB6BBE6 /* Pods-AnimeNotesApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimeNotesApp.release.xcconfig"; path = "Target Support Files/Pods-AnimeNotesApp/Pods-AnimeNotesApp.release.xcconfig"; sourceTree = "<group>"; };
+		CE45C1862B22E52700FDB613 /* PasswordResetModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetModalView.swift; sourceTree = "<group>"; };
 		CE6C08682AF4DFFE0036310C /* AnimeNotesApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnimeNotesApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE6C086B2AF4DFFE0036310C /* AnimeNotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeNotesApp.swift; sourceTree = "<group>"; };
 		CE6C086F2AF4DFFF0036310C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -327,6 +329,7 @@
 			isa = PBXGroup;
 			children = (
 				CE8EC16B2AFF4F3E003F6BDF /* StatusSelectionModalView.swift */,
+				CE45C1862B22E52700FDB613 /* PasswordResetModalView.swift */,
 			);
 			path = Modals;
 			sourceTree = "<group>";
@@ -830,6 +833,7 @@
 				CEF953362B16EE1000CA85B2 /* EditAccountInfoView.swift in Sources */,
 				CE8EC1852B04B51A003F6BDF /* CustomTextField.swift in Sources */,
 				CE6F0A222B103172000F681D /* SearchResultsView.swift in Sources */,
+				CE45C1872B22E52700FDB613 /* PasswordResetModalView.swift in Sources */,
 				CEEAAFC02B0614B40023A896 /* AnimeDataServiceProtocol.swift in Sources */,
 				CEF9532E2B15D9C000CA85B2 /* TermsAgreementView.swift in Sources */,
 				CE6F0A1C2B09D4B6000F681D /* AnyEncodable.swift in Sources */,

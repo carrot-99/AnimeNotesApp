@@ -62,25 +62,25 @@ class SeasonListViewModel: ObservableObject {
 
 extension SeasonListViewModel {
     
-    func selectSeason(_ season: String) {
+    func selectSeason(_ season: String, isAuthenticated: Bool) {
         guard selectedSeason == nil, self.selectedSeason != season else {
             return
         }
         self.selectedSeason = season
-        fetchDataForSelectedSeason()
+        fetchDataForSelectedSeason(isAuthenticated: isAuthenticated)
     }
 
-    private func fetchDataForSelectedSeason() {
+    private func fetchDataForSelectedSeason(isAuthenticated: Bool) {
         guard let season = selectedSeason else { return }
         let viewModel = viewModelForSeason(season)
-        viewModel.fetchDataForSeason()
+        viewModel.fetchDataForSeason(isAuthenticated: isAuthenticated)
         self.selectedAnimeListViewModel = viewModel
     }
 
     func navigateToAnimeDetail(season: String) -> AnimeListView {
         let viewModel = viewModelForSeason(season)
-        viewModel.fetchDataForSeason() // ここでデータをフェッチする
-        return AnimeListView(viewModel: viewModel)
+        viewModel.fetchDataForSeason(isAuthenticated: userSessionViewModel.isUserAuthenticated) // ここでデータをフェッチする
+        return AnimeListView(animeListviewModel: viewModel)
     }
 
     func resetNavigationState() {
