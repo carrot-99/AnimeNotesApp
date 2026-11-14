@@ -2,21 +2,43 @@
 
 import SwiftUI
 
+/// 画面の主要な操作に使う横幅いっぱいのボタン
 struct PrimaryButtonStyle: ButtonStyle {
-    var color: Color = .blue
+    @Environment(\.isEnabled) private var isEnabled
+    var color: Color = .accentColor
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .font(.headline)
             .foregroundColor(.white)
-            .padding()
-            .background(configuration.isPressed ? color.opacity(0.8) : color)
-            .cornerRadius(10)
-            .shadow(radius: 5)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(isEnabled ? color : Color.gray.opacity(0.5))
+            )
+            .opacity(configuration.isPressed ? 0.85 : 1)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
-extension Button {
-    func primaryButtonStyle() -> some View {
-        self.buttonStyle(PrimaryButtonStyle())
+/// 処理中はインジケーターを表示する主要ボタン
+struct PrimaryButton: View {
+    let title: String
+    var isLoading = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            if isLoading {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .tint(.white)
+            } else {
+                Text(title)
+            }
+        }
+        .buttonStyle(PrimaryButtonStyle())
+        .disabled(isLoading)
     }
 }

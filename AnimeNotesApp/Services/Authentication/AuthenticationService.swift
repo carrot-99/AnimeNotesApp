@@ -1,172 +1,105 @@
 //  AuthenticationService.swift
 
-import Combine
 import FirebaseAuth
 import FirebaseFirestore
 
-class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
-    private var cancellables = Set<AnyCancellable>()
+final class AuthenticationService: FirestoreService, AuthenticationServiceProtocol {
+    private var auth: Auth { Auth.auth() }
+    private var users: CollectionReference { db.collection(FirestoreCollection.users) }
 
-    var auth: Auth {
-        return Auth.auth()
+    private struct UserProfile: Codable {
+        var email: String?
+        var username: String?
     }
 
-    var currentUserId: String {
-        return auth.currentUser?.uid ?? ""
+    /// Auth の監視ハンドルを保持し、解放時に監視を解除する
+    private final class ListenerToken {
+        private let handle: AuthStateDidChangeListenerHandle
+        init(handle: AuthStateDidChangeListenerHandle) { self.handle = handle }
+        deinit { Auth.auth().removeStateDidChangeListener(handle) }
     }
-    
+
     var currentUser: UserModel? {
-        guard let firebaseUser = Auth.auth().currentUser else {
-            return nil
-        }
-        return UserModel(uid: firebaseUser.uid, email: firebaseUser.email)
-    }
-    
-    init() {
-        super.init()
-    }
-    
-    func createAccount(email: String, password: String) -> AnyPublisher<User, Error> {
-        Future<User, Error> { [weak self] promise in
-            guard let self = self else { return }
-            self.auth.createUser(withEmail: email, password: password) { authResult, error in
-                if let error = error {
-                    promise(.failure(error))
-                } else if let user = authResult?.user {
-                    let userDocumentRef = self.db.collection("users").document(user.uid)
-                    let userData = UserCreationData(
-                        email: email,
-                        username: "New User"
-                    )
-                    
-                    self.setData(userDocumentRef, for: userData)
-                        .sink(receiveCompletion: { completion in
-                            if case let .failure(error) = completion {
-                                promise(.failure(error))
-                            }
-                        }, receiveValue: {
-                            promise(.success(user))
-                        })
-                        .store(in: &self.cancellables)
-                }
-                
-                authResult?.user.sendEmailVerification(completion: { error in
-                    if let error = error {
-                        print("メール確認送信エラー: \(error.localizedDescription)")
-                    }
-                })
-            }
-        }
-        .eraseToAnyPublisher()
+        auth.currentUser.map(Self.makeModel)
     }
 
-    func signIn(email: String, password: String) -> AnyPublisher<User, Error> {
-        Future<User, Error> { promise in
-            self.auth.signIn(withEmail: email, password: password) { result, error in
-                if let error = error {
-                    promise(.failure(error))
-                } else if let user = result?.user {
-                    promise(.success(user))
-                } else {
-                    let error = NSError(domain: "AuthServiceError", code: -1, userInfo: [NSLocalizedDescriptionKey: "不明なエラーが発生しました。"])
-                    promise(.failure(error))
-                }
-            }
+    func observeAuthState(_ handler: @escaping (UserModel?) -> Void) -> AnyObject {
+        let handle = auth.addStateDidChangeListener { _, user in
+            handler(user.map(Self.makeModel))
         }
-        .eraseToAnyPublisher()
+        return ListenerToken(handle: handle)
     }
-    
-    func signOut() -> AnyPublisher<Void, Error> {
-        Future<Void, Error> { promise in
-            do {
-                try self.auth.signOut()
-                promise(.success(()))
-            } catch {
-                promise(.failure(error))
-            }
-        }
-        .eraseToAnyPublisher()
-    }
-    
-    func fetchUserInfo(userId: String) -> AnyPublisher<UserModel, Error> {
-        let userDocRef = db.collection("users").document(userId)
-        return Future<UserModel, Error> { promise in
-            userDocRef.getDocument { documentSnapshot, error in
-                if let error = error {
-                    promise(.failure(error))
-                } else if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
-                    guard let data = documentSnapshot.data() else {
-                        promise(.failure(NSError(domain: "FirestoreError", code: 1, userInfo: nil)))
-                        return
-                    }
-                    let userModel = UserModel(
-                        uid: userId,
-                        email: data["email"] as? String,
-                        username: data["username"] as? String
-                    )
-                    promise(.success(userModel))
-                } else {
-                    promise(.failure(NSError(domain: "FirestoreError", code: 0, userInfo: nil)))
-                }
-            }
-        }
-        .eraseToAnyPublisher()
-    }
-    
-    func updateUserInfo(userId: String, userData: [String: Any]) -> AnyPublisher<Void, Error> {
-        let userDocRef = db.collection("users").document(userId)
-        return updateData(userDocRef, data: userData)
-    }
-    
-    struct UserCreationData: Encodable {
-        let email: String
-        let username: String
-    }
-    
-    func deleteUser() -> AnyPublisher<Void, Error> {
-        Future<Void, Error> { promise in
-            guard let user = self.auth.currentUser else {
-                promise(.failure(NSError(domain: "FirebaseAuthError", code: 0, userInfo: nil)))
-                return
-            }
 
-            user.delete { error in
-                if let error = error {
-                    promise(.failure(error))
-                } else {
-                    promise(.success(()))
-                }
-            }
-        }
-        .eraseToAnyPublisher()
+    func createAccount(email: String, password: String) async throws {
+        let result = try await auth.createUser(withEmail: email, password: password)
+        try await set(UserProfile(email: email, username: "New User"), at: users.document(result.user.uid))
+        // 認証メールの送信失敗はアカウント作成自体の失敗とはしない（後から再送できる）
+        try? await result.user.sendEmailVerification()
     }
-    
-    func reauthenticate(email: String, password: String) -> AnyPublisher<Void, Error> {
-        Future<Void, Error> { promise in
-            let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-            self.auth.currentUser?.reauthenticate(with: credential) { _, error in
-                if let error = error {
-                    promise(.failure(error))
-                } else {
-                    promise(.success(()))
-                }
-            }
-        }
-        .eraseToAnyPublisher()
-    }
-}
 
-extension AuthenticationService {
-    func resetPassword(email: String) -> AnyPublisher<Void, Error> {
-        Future<Void, Error> { promise in
-            self.auth.sendPasswordReset(withEmail: email) { error in
-                if let error = error {
-                    promise(.failure(error))
-                } else {
-                    promise(.success(()))
-                }
-            }
+    func signIn(email: String, password: String) async throws {
+        _ = try await auth.signIn(withEmail: email, password: password)
+    }
+
+    func signOut() throws {
+        try auth.signOut()
+    }
+
+    func sendPasswordReset(email: String) async throws {
+        try await auth.sendPasswordReset(withEmail: email)
+    }
+
+    func sendEmailVerification() async throws {
+        guard let user = auth.currentUser else { throw AppError.notSignedIn }
+        try await user.sendEmailVerification()
+    }
+
+    func reloadCurrentUser() async throws -> UserModel? {
+        guard let user = auth.currentUser else { return nil }
+        try await user.reload()
+        return auth.currentUser.map(Self.makeModel)
+    }
+
+    func fetchUsername(userId: String) async throws -> String? {
+        let snapshot = try await users.document(userId).getDocument()
+        guard snapshot.exists else { return nil }
+        return try snapshot.data(as: UserProfile.self).username
+    }
+
+    func updateUsername(_ username: String, userId: String) async throws {
+        try await users.document(userId).setData(["username": username], merge: true)
+    }
+
+    func deleteAccount(password: String) async throws {
+        guard let user = auth.currentUser else { throw AppError.notSignedIn }
+        guard let email = user.email else { throw AppError.missingEmail }
+
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        try await user.reauthenticate(with: credential)
+        try await deleteUserData(userId: user.uid)
+        try await user.delete()
+    }
+
+    /// ユーザーに紐づく Firestore のデータ（視聴履歴・エピソード履歴・プロフィール）を削除する
+    private func deleteUserData(userId: String) async throws {
+        let historySnapshot = try await db.collection(FirestoreCollection.watchingHistory)
+            .whereField("user_id", isEqualTo: userId)
+            .getDocuments()
+
+        var references: [DocumentReference] = []
+        for document in historySnapshot.documents {
+            let episodes = try await document.reference.collection(FirestoreCollection.episodesHistory).getDocuments()
+            references += episodes.documents.map(\.reference)
+            references.append(document.reference)
         }
-        .eraseToAnyPublisher()
+        references.append(users.document(userId))
+
+        try await commitInBatches(references) { batch, reference in
+            batch.deleteDocument(reference)
+        }
+    }
+
+    private static func makeModel(from user: User) -> UserModel {
+        UserModel(uid: user.uid, email: user.email, isEmailVerified: user.isEmailVerified)
     }
 }

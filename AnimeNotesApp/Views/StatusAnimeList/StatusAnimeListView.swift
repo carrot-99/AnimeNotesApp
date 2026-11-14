@@ -1,74 +1,34 @@
 //  StatusAnimeListView.swift
 
 import SwiftUI
-import Combine
 
+/// 視聴状況別の作品一覧
 struct StatusAnimeListView: View {
-    @ObservedObject var viewModel: StatusAnimeListViewModel
+    @EnvironmentObject private var session: UserSessionViewModel
+    @StateObject private var viewModel: StatusAnimeListViewModel
+
+    init(status: WatchStatus) {
+        _viewModel = StateObject(wrappedValue: StatusAnimeListViewModel(status: status))
+    }
 
     var body: some View {
-        List(viewModel.animes) { anime in
-            AnimeListViewComponent(
-                anime: anime,
-                onStatusIconTap: {
-                    viewModel.selectedAnimeForStatusUpdate = anime
-                    viewModel.selectedStatus = anime.status
-                    viewModel.showingStatusSelection = true
-                },
-                onAnimeTap: {
-                    viewModel.selectAnimeForDetail(anime)
-                },
-                updateStatus: { newStatus in
-                    // ここでアニメのステータスを更新するロジックを実装します
-                    viewModel.updateWatchingStatus(for: anime.anime_id, newStatus: newStatus)
-                }
+        AnimeCollectionList(
+            animes: viewModel.animes,
+            isLoading: viewModel.isLoading,
+            onStatusChange: { anime, status in
+                Task { await viewModel.setStatus(status, for: anime) }
+            },
+            onAnimeUpdate: viewModel.apply
+        ) {
+            EmptyStateView(
+                systemImage: viewModel.status.systemImage,
+                title: "\(viewModel.status.listTitle)はありません",
+                message: "クール一覧や検索から作品の視聴状況を設定すると、ここに表示されます。"
             )
-            .listRowInsets(EdgeInsets())
-            .listRowBackground(Color.clear)
-            .listRowSeparator(.hidden)
         }
-//        .background(Color(UIColor.systemGroupedBackground))
-        .sheet(isPresented: $viewModel.showingStatusSelection) {
-            if let selectedAnime = viewModel.selectedAnimeForStatusUpdate {
-                StatusSelectionModalView(
-                    selectedStatus: $viewModel.selectedStatus,
-                    isPresented: $viewModel.showingStatusSelection,
-                    updateStatus: { newStatus in
-                        viewModel.updateWatchingStatus(for: selectedAnime.anime_id, newStatus: newStatus)
-                    }
-                )
-            }
-        }
-        .background(
-            Group {
-                if viewModel.isAnimeSelected, let anime = viewModel.selectedAnime {
-                    NavigationLink(
-                        destination: AnimeDetailView(anime: anime, ViewModel: AnimeDetailViewModel(anime: anime, episodeDataService: EpisodeDataService())),
-                        isActive: $viewModel.isAnimeSelected
-                    ) {
-                        EmptyView()
-                    }
-                }
-            }
-        )
-        .navigationTitle(titleForStatus(viewModel.status))
-        .onAppear {
-            viewModel.fetchStatusAnimes(for: viewModel.userId, with: viewModel.status)
-        }
-    }
-    
-    func titleForStatus(_ status: Int) -> String {
-        switch status {
-        case 1:
-            return "視聴中作品"
-        case 2:
-            return "視聴中断作品"
-        case 3:
-            return "視聴済作品"
-        case 4:
-            return "視聴予定作品"
-        default:
-            return "未視聴作品"
-        }
+        .refreshable { await viewModel.reload(userId: session.userId) }
+        .navigationTitle(viewModel.status.listTitle)
+        .task { await viewModel.reload(userId: session.userId) }
+        .errorAlert($viewModel.errorMessage)
     }
 }

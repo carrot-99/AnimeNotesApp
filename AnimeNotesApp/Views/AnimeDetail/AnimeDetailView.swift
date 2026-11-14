@@ -1,89 +1,154 @@
 //  AnimeDetailView.swift
 
 import SwiftUI
-import FirebaseAuth
 
 struct AnimeDetailView: View {
-    var anime: UserAnime
-    @ObservedObject var ViewModel: AnimeDetailViewModel
-    
-    var showingStatusSelectionBinding: Binding<Bool> {
-        Binding(
-            get: { self.ViewModel.showingStatusSelection },
-            set: { self.ViewModel.showingStatusSelection = $0 }
-        )
-    }
+    @StateObject private var viewModel: AnimeDetailViewModel
+    @State private var isConfirmingReset = false
 
-    var selectedStatusBinding: Binding<Int> {
-        Binding(
-            get: { self.ViewModel.selectedStatus },
-            set: { self.ViewModel.selectedStatus = $0 }
-        )
-    }
-    
-    init(anime: UserAnime, ViewModel: AnimeDetailViewModel) {
-        self.anime = anime
-        self.ViewModel = ViewModel
+    init(anime: UserAnime, onAnimeChange: @escaping (UserAnime) -> Void = { _ in }) {
+        _viewModel = StateObject(wrappedValue: AnimeDetailViewModel(anime: anime, onAnimeChange: onAnimeChange))
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                Text(anime.title)
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding(.leading, 16)
-                
-                HStack {
-                    Text("放送時期：")
-                        .fontWeight(.semibold)
-                    Text(anime.seasonYear != nil ? "\(String(anime.seasonYear!))" : "--")
-                    Text(ViewModel.seasonTranslate(season: anime.season ?? "-"))
-                    Text("エピソード数：")
-                        .fontWeight(.semibold)
-                    Text(anime.episodes != nil ? "全\(anime.episodes!)話" : "全--話")
+        List {
+            headerSection
+            if viewModel.hasEpisodeInfo {
+                progressSection
+                episodesSection
+            } else {
+                Section {
+                    Text("この作品の話数情報はまだありません。作品全体の視聴状況のみ記録できます。")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
-                .padding(.leading, 20)
-                
-                if ViewModel.isLoading {
+            }
+        }
+        .listStyle(.insetGrouped)
+        .navigationTitle(viewModel.anime.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .refreshable { await viewModel.reload() }
+        .task { await viewModel.loadIfNeeded() }
+        .errorAlert($viewModel.errorMessage)
+        .confirmationDialog("すべてのエピソードを未視聴に戻しますか？", isPresented: $isConfirmingReset, titleVisibility: .visible) {
+            Button("未視聴に戻す", role: .destructive) {
+                Task { await viewModel.markAll(.notWatched) }
+            }
+        }
+    }
+
+    // MARK: - Sections
+
+    private var headerSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(viewModel.anime.title)
+                    .font(.title2.bold())
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 12) {
+                    Label(viewModel.anime.seasonText, systemImage: "calendar")
+                    Label(viewModel.anime.episodesText, systemImage: "film")
+                }
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 6)
+
+            Picker(selection: animeStatusBinding) {
+                ForEach(WatchStatus.menuOrder) { status in
+                    Label(status.label, systemImage: status.systemImage).tag(status)
+                }
+            } label: {
+                Label {
+                    Text("視聴状況")
+                } icon: {
+                    StatusIcon(status: viewModel.anime.watchStatus, font: .body)
+                }
+            }
+            .pickerStyle(.menu)
+        }
+    }
+
+    private var progressSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("\(viewModel.watchedCount)")
+                        .font(.title.bold().monospacedDigit())
+                    Text("/ \(viewModel.episodes.count)話 視聴済")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("\(Int((viewModel.progress * 100).rounded()))%")
+                        .font(.headline.monospacedDigit())
+                        .foregroundColor(.green)
+                }
+                ProgressView(value: viewModel.progress)
+                    .tint(.green)
+                    .animation(.easeInOut, value: viewModel.progress)
+            }
+            .padding(.vertical, 4)
+
+            Button {
+                Task { await viewModel.markAll(.watched) }
+            } label: {
+                Label("すべて視聴済にする", systemImage: "checkmark.circle")
+            }
+            .disabled(viewModel.episodes.isEmpty || viewModel.watchedCount == viewModel.episodes.count)
+
+            Button(role: .destructive) {
+                isConfirmingReset = true
+            } label: {
+                Label("すべて未視聴に戻す", systemImage: "arrow.uturn.backward.circle")
+            }
+            .disabled(viewModel.episodes.allSatisfy { $0.watchStatus == .notWatched })
+        } header: {
+            Text("進捗")
+        }
+    }
+
+    private var episodesSection: some View {
+        Section {
+            if viewModel.isLoading && viewModel.episodes.isEmpty {
+                HStack {
+                    Spacer()
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(2)
-                } else {
-                    VStack(spacing: 8) {
-                        ForEach(ViewModel.episodes, id: \.id) { episode in
-                            ListItemView(
-                                title: "エピソード \(episode.episode_num)",
-                                iconName: iconForStatus(episode.status)
-                            )
-                            .onTapGesture {
-                                ViewModel.selectEpisode(episode)
-                            }
-                            .padding(.horizontal)
+                    Spacer()
+                }
+            }
+            ForEach(viewModel.episodes) { episode in
+                Button {
+                    Task { await viewModel.toggle(episode) }
+                } label: {
+                    HStack(spacing: 12) {
+                        StatusIcon(status: episode.watchStatus, font: .title3)
+                        Text("第\(episode.episode_num)話")
+                            .foregroundColor(.primary)
+                        Spacer()
+                        if episode.watchStatus != .notWatched {
+                            Text(episode.watchStatus.label)
+                                .font(.caption)
+                                .foregroundColor(episode.watchStatus.color)
                         }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .contextMenu {
+                    StatusMenuItems(current: episode.watchStatus) { status in
+                        Task { await viewModel.setStatus(status, for: episode) }
                     }
                 }
             }
-            .onAppear {
-                ViewModel.fetchEpisodes(for: anime)
-            }
-            .onChange(of: ViewModel.statusUpdated) { updated in
-                if updated {
-                    // ステータスが更新されたらビューを再描画
-                    self.ViewModel.fetchEpisodes(for: anime)
-                }
-            }
-            .padding()
+        } header: {
+            Text("エピソード")
+        } footer: {
+            Text("タップで「視聴済」と「未視聴」を切り替えます。長押しでその他の状況を選べます。全話視聴すると作品は自動的に「視聴済」になります。")
         }
-        .navigationBarTitle(Text(anime.title), displayMode: .inline)
-        .sheet(isPresented: $ViewModel.showingStatusSelection) {
-            StatusSelectionModalView(
-                selectedStatus: $ViewModel.selectedStatus,
-                isPresented: $ViewModel.showingStatusSelection,
-                updateStatus: {_ in
-                    self.ViewModel.updateStatusForSelectedEpisode()
-                }
-            )
-        }
+    }
+
+    private var animeStatusBinding: Binding<WatchStatus> {
+        Binding(
+            get: { viewModel.anime.watchStatus },
+            set: { status in Task { await viewModel.setAnimeStatus(status) } }
+        )
     }
 }

@@ -1,122 +1,45 @@
 // AnimeListViewModel.swift
 
 import Foundation
-import Combine
-import FirebaseAuth
 
-class AnimeListViewModel: BaseViewModel {
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
-    @Published var showingError: Bool = false
-    private var localCancellables = Set<AnyCancellable>()
-    let season: String
-    
-    init(season: String, animeDataService: AnimeDataServiceProtocol = AnimeDataService()) {
+/// クール別の作品一覧
+@MainActor
+final class AnimeListViewModel: AnimeCollectionViewModel {
+    let season: AnimeSeason
+
+    @Published var filterText = ""
+    @Published var statusFilter: WatchStatus?
+
+    private var hasLoaded = false
+
+    init(season: AnimeSeason, animeService: AnimeDataServiceProtocol = AnimeDataService()) {
         self.season = season
-        super.init(animeDataService: animeDataService)
+        super.init(animeService: animeService)
     }
-    
-    func fetchDataForSeason(isAuthenticated: Bool) {
-        isLoading = true
-        let components = SeasonUtility.parseSeasonComponents(from: self.season)
-        guard components.year > 0, !components.season.isEmpty else {
-            self.errorMessage = "Invalid season data."
-            self.showingError = true
-            isLoading = false
-            return
-        }
 
-        if isAuthenticated {
-            fetchAnimesForAuthenticatedUser(seasonYear: components.year, season: components.season)
-        } else {
-            fetchAnimesForUnauthenticatedUser(seasonYear: components.year, season: components.season)
+    /// 絞り込み後の一覧
+    var filteredAnimes: [UserAnime] {
+        let keyword = filterText.trimmingCharacters(in: .whitespacesAndNewlines)
+        return animes.filter { anime in
+            (statusFilter == nil || anime.watchStatus == statusFilter)
+                && (keyword.isEmpty || anime.title.localizedCaseInsensitiveContains(keyword))
         }
     }
-    
-//    private func parseSeasonAndFetchAnimes(season: String) {
-//        let components = SeasonUtility.parseSeasonComponents(from: season)
-//        guard components.year > 0, !components.season.isEmpty else {
-//            self.errorMessage = "Invalid season data."
-//            self.showingError = true
-//            return
-//        }
-//        self.fetchAnimes(seasonYear: components.year, season: components.season)
-//    }
-    
-    private func fetchAnimesForAuthenticatedUser(seasonYear: Int, season: String) {
-        isLoading = true
-        animeDataService.fetchAnimes(seasonYear: seasonYear, season: season)
-            .flatMap { [weak self] animes -> AnyPublisher<[UserAnime], Error> in
-                guard let self = self else {
-                    return Fail(error: CustomError.unknown).eraseToAnyPublisher()
-                }
-                return self.fetchAndUpdateUserAnimes(userId: self.userId, animes: animes)
-            }
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    self?.isLoading = false
-                    if case let .failure(error) = completion {
-                        print("アニメデータのフェッチ中にエラーが発生しました: \(error)")
-                        self?.errorMessage = error.localizedDescription
-                        self?.showingError = true
-                    }
-                },
-                receiveValue: { [weak self] userAnimes in
-                    self?.animes = userAnimes
-                }
-            )
-            .store(in: &localCancellables)
+
+    var isFiltering: Bool {
+        statusFilter != nil || !filterText.trimmingCharacters(in: .whitespaces).isEmpty
     }
-    
-    private func fetchAnimesForUnauthenticatedUser(seasonYear: Int, season: String) {
-        animeDataService.fetchAnimes(seasonYear: seasonYear, season: season)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    self?.isLoading = false
-                    // ... エラーハンドリング
-                },
-                receiveValue: { [weak self] animes in
-                    self?.animes = animes.map { anime in
-                        UserAnime(
-                            id: "local-\(anime.id ?? "unknown")",
-                            user_id: "local",
-                            anime_id: Int(anime.id ?? "0") ?? 0,
-                            title: anime.title.native,
-                            episodes: anime.episodes,
-                            season: anime.season,
-                            seasonYear: anime.seasonYear,
-                            status: 0
-                        )
-                    }
-                }
-            )
-            .store(in: &localCancellables)
+
+    func loadIfNeeded(userId: String?) async {
+        guard !hasLoaded else { return }
+        await reload(userId: userId)
     }
-    
-    private func fetchAndUpdateUserAnimes(userId: String, animes: [Anime]) -> AnyPublisher<[UserAnime], Error> {
-        let userAnimeQueries = animes.map { anime in
-            animeDataService.fetchUserAnime(for: anime, userId: userId)
-                .flatMap { userAnime -> AnyPublisher<UserAnime, Error> in
-                    if userAnime.id.isEmpty {
-                        return self.animeDataService.createOrUpdateUserAnime(userId: userId, anime: anime)
-                    } else {
-                        return Just(userAnime).setFailureType(to: Error.self).eraseToAnyPublisher()
-                    }
-                }
+
+    func reload(userId: String?) async {
+        await load {
+            let animes = try await animeService.fetchAnimes(in: season)
+            return try await animeService.userAnimes(for: animes, userId: userId).sortedByTitle()
         }
-        return Publishers.MergeMany(userAnimeQueries).collect().eraseToAnyPublisher()
-    }
-    
-    override func updateWatchingStatus(for animeId: Int, newStatus: Int) {
-        super.updateWatchingStatus(for: animeId, newStatus: newStatus)
-        if let index = animes.firstIndex(where: { $0.anime_id == animeId }) {
-            animes[index].status = newStatus
-        }
-    }
-    
-    override func selectAnimeForDetail(_ anime: UserAnime) {
-        super.selectAnimeForDetail(anime)
+        hasLoaded = errorMessage == nil
     }
 }

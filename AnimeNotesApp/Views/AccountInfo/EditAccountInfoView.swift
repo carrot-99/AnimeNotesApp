@@ -3,48 +3,61 @@
 import SwiftUI
 
 struct EditAccountInfoView: View {
-    @EnvironmentObject var userSessionViewModel: UserSessionViewModel
-    @State private var username: String = ""
-    @State private var showingUpdateAlert = false
-    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var session: UserSessionViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var username = ""
+    @State private var errorMessage: String?
+    @FocusState private var isFocused: Bool
+
+    private var canSave: Bool {
+        Validation.isValidUsername(username)
+            && username.trimmingCharacters(in: .whitespacesAndNewlines) != session.currentUser?.username
+    }
 
     var body: some View {
-        VStack(spacing: 20) {
-            TextField("ユーザー名を入力", text: $username)
-                .modifier(FlatTextField())
-
-            Button("更新") {
-                let updatedUser = UserModel(
-                    uid: userSessionViewModel.currentUser?.uid ?? "",
-                    email: userSessionViewModel.currentUser?.email,
-                    username: username
-                )
-                userSessionViewModel.updateUserInfo(updatedUser: updatedUser)
-                showingUpdateAlert = true
+        Form {
+            Section {
+                TextField("ユーザー名", text: $username)
+                    .focused($isFocused)
+                    .submitLabel(.done)
+                    .onSubmit(save)
+            } header: {
+                Text("ユーザー名")
+            } footer: {
+                if let errorMessage {
+                    Text(errorMessage).foregroundColor(.red)
+                } else {
+                    Text("\(Validation.usernameMaxLength)文字以内（\(username.count)/\(Validation.usernameMaxLength)）")
+                        .foregroundColor(username.count > Validation.usernameMaxLength ? .red : .secondary)
+                }
             }
-            .buttonStyle(PrimaryButtonStyle())
-            .alert(isPresented: $showingUpdateAlert) {
-                Alert(
-                    title: Text("更新完了"),
-                    message: Text(userSessionViewModel.updateSuccessMessage ?? "情報が更新されました。"),
-                    dismissButton: .default(Text("OK"), action: {
-                        if userSessionViewModel.isUpdateSuccessful {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    })
-                )
+        }
+        .navigationTitle("ユーザー名の変更")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                if session.isProcessing {
+                    ProgressView()
+                } else {
+                    Button("保存", action: save)
+                        .disabled(!canSave)
+                }
             }
         }
         .onAppear {
-            if let user = userSessionViewModel.currentUser {
-                username = user.username ?? ""
+            username = session.currentUser?.username ?? ""
+            isFocused = true
+        }
+    }
+
+    private func save() {
+        guard canSave, !session.isProcessing else { return }
+        Task {
+            errorMessage = await session.updateUsername(username)
+            if errorMessage == nil {
+                Haptics.success()
+                dismiss()
             }
         }
-        .onChange(of: userSessionViewModel.isUpdateSuccessful) { success in
-            if success {
-                presentationMode.wrappedValue.dismiss()  // ビューを閉じる
-            }
-        }
-        .padding()
     }
 }

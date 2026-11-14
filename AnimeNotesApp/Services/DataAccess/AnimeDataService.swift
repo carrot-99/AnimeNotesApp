@@ -1,122 +1,72 @@
 //  AnimeDataService.swift
 
-import Combine
+import FirebaseFirestore
 
-class AnimeDataService: FirestoreService, AnimeDataServiceProtocol {
-    func fetchAnimes(seasonYear: Int, season: String) -> AnyPublisher<[Anime], Error> {
-        let query = db.collection("animes")
-            .whereField("seasonYear", isEqualTo: seasonYear)
-            .whereField("season", isEqualTo: season)
-        return performQuery(query, decodingType: Anime.self)
+final class AnimeDataService: FirestoreService, AnimeDataServiceProtocol {
+    private var animes: CollectionReference { db.collection(FirestoreCollection.animes) }
+    private var history: CollectionReference { db.collection(FirestoreCollection.watchingHistory) }
+
+    func fetchAnimes(in season: AnimeSeason) async throws -> [Anime] {
+        let query = animes
+            .whereField("seasonYear", isEqualTo: season.year)
+            .whereField("season", isEqualTo: season.quarter.rawValue)
+        return try await documents(query, as: Anime.self)
     }
-    
-    func createOrUpdateUserAnime(userId: String, anime: Anime) -> AnyPublisher<UserAnime, Error> {
-        let userAnime = UserAnime(
-            id: "\(userId)-\(anime.id ?? "")",
-            user_id: userId,
-            anime_id: Int(anime.id ?? "0")!,
-            title: anime.title.native,
-            episodes: anime.episodes,
-            season: anime.season,
-            seasonYear: anime.seasonYear,
-            status: 0
-        )
-        let documentRef = db.collection("userWatchingHistory").document(userAnime.id)
-        return setData(documentRef, for: userAnime)
-            .map { _ in userAnime }
-            .eraseToAnyPublisher()
+
+    func searchAnimes(title: String) async throws -> [Anime] {
+        let keyword = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !keyword.isEmpty else { return [] }
+        let query = animes
+            .whereField("title.native", isGreaterThanOrEqualTo: keyword)
+            .whereField("title.native", isLessThanOrEqualTo: keyword + "\u{f8ff}")
+            .limit(to: 100)
+        return try await documents(query, as: Anime.self)
     }
-    
-    func fetchStatusAnimes(userId: String, status: Int) -> AnyPublisher<[UserAnime], Error> {
-        let query = db.collection("userWatchingHistory")
-            .whereField("user_id", isEqualTo: userId)
-            .whereField("status", isEqualTo: status)
-        return performQuery(query, decodingType: UserAnime.self)
-    }
-    
-    func updateWatchingStatus(animeId: Int, newStatus: Int, userId: String) -> AnyPublisher<Void, Error> {
-        let documentId = "\(userId)-\(animeId)"
-        let documentRef = db.collection("userWatchingHistory").document(documentId)
-        return updateData(documentRef, data: ["status": newStatus])
-    }
-    
-    func searchAnimesByTitleForAuthenticatedUser(userId: String, title: String) -> AnyPublisher<[UserAnime], Error> {
-        let query = db.collection("animes")
-            .whereField("title.native", isGreaterThanOrEqualTo: title)
-            .whereField("title.native", isLessThanOrEqualTo: title + "\u{f8ff}")
-        
-        return performQuery(query, decodingType: Anime.self).flatMap { [weak self] animes -> AnyPublisher<[UserAnime], Error> in
-            guard let self = self else {
-                return Fail(error: CustomError.unknown).eraseToAnyPublisher()
+
+    func fetchHistory(userId: String, animeIds: [Int]) async throws -> [UserAnime] {
+        let chunks = Array(Set(animeIds)).chunked(into: Self.inQueryLimit)
+        return try await withThrowingTaskGroup(of: [UserAnime].self) { group in
+            for ids in chunks where !ids.isEmpty {
+                let query = history
+                    .whereField("user_id", isEqualTo: userId)
+                    .whereField("anime_id", in: ids)
+                group.addTask { try await self.documents(query, as: UserAnime.self) }
             }
-            
-            let userAnimeQueries = animes.map { anime -> AnyPublisher<UserAnime, Error> in
-                self.fetchUserAnime(for: anime, userId: userId)
+            var results: [UserAnime] = []
+            for try await chunk in group {
+                results += chunk
             }
-            
-            return Publishers.MergeMany(userAnimeQueries).collect().eraseToAnyPublisher()
-        }.eraseToAnyPublisher()
+            return results
+        }
     }
-    
-    func searchAnimesByTitleForUnauthenticatedUser(title: String) -> AnyPublisher<[Anime], Error> {
-        let query = db.collection("animes")
-            .whereField("title.native", isGreaterThanOrEqualTo: title)
-            .whereField("title.native", isLessThanOrEqualTo: title + "\u{f8ff}")
-        return performQuery(query, decodingType: Anime.self)
-    }
-    
-    func fetchUserAnime(for anime: Anime, userId: String) -> AnyPublisher<UserAnime, Error> {
-        let userAnimeRef = self.db.collection("userWatchingHistory")
-            .whereField("anime_id", isEqualTo: Int(anime.id ?? "0") ?? 0)
+
+    func fetchHistory(userId: String, status: WatchStatus) async throws -> [UserAnime] {
+        let query = history
             .whereField("user_id", isEqualTo: userId)
-        return performQuery(userAnimeRef, decodingType: UserAnime.self)
-            .flatMap { userAnimes -> AnyPublisher<UserAnime, Error> in
-                if let foundUserAnime = userAnimes.first {
-                    return Just(foundUserAnime)
-                        .setFailureType(to: Error.self)
-                        .eraseToAnyPublisher()
-                } else {
-                    let newUserAnime = UserAnime(
-                        id: "\(userId)-\(anime.id ?? "")",
-                        user_id: userId,
-                        anime_id: Int(anime.id ?? "0")!,
-                        title: anime.title.native,
-                        episodes: anime.episodes,
-                        season: anime.season,
-                        seasonYear: anime.seasonYear,
-                        status: 0
-                    )
-                    let documentRef = self.db.collection("userWatchingHistory").document(newUserAnime.id)
-                    return self.setData(documentRef, for: newUserAnime)
-                        .map { _ in newUserAnime }
-                        .eraseToAnyPublisher()
+            .whereField("status", isEqualTo: status.rawValue)
+        return try await documents(query, as: UserAnime.self)
+    }
+
+    func fetchStatusCounts(userId: String) async throws -> [WatchStatus: Int] {
+        try await withThrowingTaskGroup(of: (WatchStatus, Int).self) { group in
+            for status in WatchStatus.tracked {
+                let query = history
+                    .whereField("user_id", isEqualTo: userId)
+                    .whereField("status", isEqualTo: status.rawValue)
+                group.addTask {
+                    let snapshot = try await query.count.getAggregation(source: .server)
+                    return (status, snapshot.count.intValue)
                 }
             }
-            .eraseToAnyPublisher()
+            var counts: [WatchStatus: Int] = [:]
+            for try await (status, count) in group {
+                counts[status] = count
+            }
+            return counts
+        }
     }
-    
-    func fetchStatusCounts(userId: String) -> AnyPublisher<StatusCounts, Error> {
 
-        func countForStatus(_ status: Int) -> AnyPublisher<Int, Error> {
-            let query = db.collection("userWatchingHistory")
-                .whereField("user_id", isEqualTo: userId)
-                .whereField("status", isEqualTo: status)
-            return performQuery(query, decodingType: UserAnime.self)
-                .map { $0.count }
-                .eraseToAnyPublisher()
-        }
-
-        return Publishers.CombineLatest4(
-            countForStatus(UserAnimeStatus.watched.rawValue),
-            countForStatus(UserAnimeStatus.watching.rawValue),
-            countForStatus(UserAnimeStatus.onHold.rawValue),
-            countForStatus(UserAnimeStatus.planned.rawValue)
-        )
-        .map { watchedCount, watchingCount, onHoldCount, plannedCount in
-            StatusCounts(watched: watchedCount, watching: watchingCount, onHold: onHoldCount, planned: plannedCount)
-        }
-        .eraseToAnyPublisher()
+    func save(_ anime: UserAnime) async throws {
+        try await set(anime, at: history.document(anime.id), merge: true)
     }
 }
-
-

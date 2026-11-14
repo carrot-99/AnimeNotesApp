@@ -3,94 +3,180 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var userSessionViewModel: UserSessionViewModel
-    @State private var showingLogoutAlert = false
-    @State private var showingDeleteAccountAlert = false
-    @State private var showingPasswordPrompt = false
-    @State private var passwordInput = ""
+    @EnvironmentObject private var session: UserSessionViewModel
+    @State private var isConfirmingSignOut = false
+    @State private var isShowingDeleteAccount = false
+    @State private var errorMessage: String?
+
+    private var appVersion: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "-"
+        let build = info?["CFBundleVersion"] as? String ?? "-"
+        return "\(version) (\(build))"
+    }
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 10) {
-                if userSessionViewModel.isUserAuthenticated {
-                    NavigationLink(destination: AccountInfoView()) {
-                        SettingsButtonLabel(title: "アカウント情報", color: Color.blue)
+            List {
+                accountSection
+
+                Section("このアプリについて") {
+                    NavigationLink {
+                        TermsView()
+                    } label: {
+                        Label("利用規約", systemImage: "doc.text")
                     }
-                    
-                    Button(action: { showingLogoutAlert = true }) {
-                        SettingsButtonLabel(title: "ログアウト", color: Color.red)
+                    NavigationLink {
+                        PrivacyPolicyView()
+                    } label: {
+                        Label("プライバシーポリシー", systemImage: "hand.raised")
                     }
-                    .alert(isPresented: $showingLogoutAlert) {
-                        Alert(
-                            title: Text("ログアウト"),
-                            message: Text("本当にログアウトしますか？"),
-                            primaryButton: .destructive(Text("ログアウト"), action: {
-                                userSessionViewModel.signOut()
-                            }),
-                            secondaryButton: .cancel()
-                        )
-                    }
-                    
-                    if userSessionViewModel.isLoading {
-                        ProgressView("処理中...")
-                    }
-                    
-                    Button(action: {
-                        self.showingPasswordPrompt = true
-                    }) {
-                        SettingsButtonLabel(title: "アカウント削除", color: Color.red)
-                    }
-                    .sheet(isPresented: $showingPasswordPrompt) {
-                        VStack(spacing: 20) {
-                            Text("アカウントを削除するにはパスワードを入力してください")
-                            TextField("パスワード", text: $passwordInput)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                                .secureTextFieldStyle()
-                            Button("アカウント削除") {
-                                userSessionViewModel.attemptToDeleteAccount(password: passwordInput)
-                                showingPasswordPrompt = false
-                            }
-                            .foregroundColor(.red)
-                            Button("キャンセル") {
-                                showingPasswordPrompt = false
-                            }
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color(.systemBackground))
-                        .edgesIgnoringSafeArea(.all)
-                    }
-                } else {
-                    NavigationLink(destination: LoginView()) {
-                        SettingsButtonLabel(title: "ログイン", color: Color.blue)
-                    }
-                    
-                    NavigationLink(destination: CreateAccountView()) {
-                        SettingsButtonLabel(title: "アカウント作成", color: Color.green)
+                    HStack {
+                        Label("バージョン", systemImage: "info.circle")
+                        Spacer()
+                        Text(appVersion)
+                            .foregroundColor(.secondary)
                     }
                 }
-                
-                NavigationLink(destination: TermsView()) {
-                    SettingsButtonLabel(title: "利用規約", color: Color.gray)
-                }
-                
-                NavigationLink(destination: PrivacyPolicyView()) {
-                    SettingsButtonLabel(title: "プライバシーポリシー", color: Color.gray)
-                }
-                
-                if let errorMessage = userSessionViewModel.errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .padding(.top, 5)
-                }
-                
-                Spacer()
             }
-            .padding()
+            .listStyle(.insetGrouped)
             .navigationTitle("設定")
+            .confirmationDialog("ログアウトしますか？", isPresented: $isConfirmingSignOut, titleVisibility: .visible) {
+                Button("ログアウト", role: .destructive) {
+                    errorMessage = session.signOut()
+                }
+            }
+            .sheet(isPresented: $isShowingDeleteAccount) {
+                DeleteAccountView()
+            }
+            .errorAlert($errorMessage)
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationViewStyle(.stack)
+    }
+
+    @ViewBuilder
+    private var accountSection: some View {
+        if let user = session.currentUser {
+            Section("アカウント") {
+                NavigationLink {
+                    AccountInfoView()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "person.crop.circle.fill")
+                            .font(.largeTitle)
+                            .foregroundColor(.accentColor)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(user.username ?? "ユーザー名未設定")
+                                .font(.headline)
+                            Text(user.email ?? "")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+
+                Button {
+                    isConfirmingSignOut = true
+                } label: {
+                    Label("ログアウト", systemImage: "rectangle.portrait.and.arrow.right")
+                }
+            }
+
+            Section {
+                Button(role: .destructive) {
+                    isShowingDeleteAccount = true
+                } label: {
+                    Label("アカウントを削除", systemImage: "trash")
+                        .foregroundColor(.red)
+                }
+            } footer: {
+                Text("アカウントを削除すると、すべての視聴記録が削除され、元に戻せません。")
+            }
+        } else {
+            Section {
+                Button {
+                    session.exitGuestMode()
+                } label: {
+                    Label("ログイン / アカウント作成", systemImage: "person.crop.circle.badge.plus")
+                }
+            } header: {
+                Text("アカウント")
+            } footer: {
+                Text("現在はアカウントなしで利用中です。アカウントを作成すると視聴状況を記録できます。")
+            }
+        }
+    }
+}
+
+/// アカウント削除（パスワードで再認証してから削除する）
+private struct DeleteAccountView: View {
+    @EnvironmentObject private var session: UserSessionViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var password = ""
+    @State private var errorMessage: String?
+    @State private var isConfirming = false
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section {
+                    Label("この操作は取り消せません", systemImage: "exclamationmark.triangle.fill")
+                        .foregroundColor(.red)
+                        .font(.headline)
+                    Text("アカウントと、これまでに記録したすべての視聴状況が完全に削除されます。")
+                        .font(.subheadline)
+                }
+
+                Section {
+                    SecureField("パスワード", text: $password)
+                        .textContentType(.password)
+                } header: {
+                    Text("本人確認")
+                } footer: {
+                    if let errorMessage {
+                        Text(errorMessage).foregroundColor(.red)
+                    } else {
+                        Text("確認のため、現在のパスワードを入力してください。")
+                    }
+                }
+
+                Section {
+                    Button(role: .destructive) {
+                        isConfirming = true
+                    } label: {
+                        HStack {
+                            Spacer()
+                            if session.isProcessing {
+                                ProgressView()
+                            } else {
+                                Text("アカウントを削除").bold()
+                            }
+                            Spacer()
+                        }
+                    }
+                    .disabled(password.isEmpty || session.isProcessing)
+                }
+            }
+            .navigationTitle("アカウント削除")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("キャンセル") { dismiss() }
+                        .disabled(session.isProcessing)
+                }
+            }
+            .confirmationDialog("本当にアカウントを削除しますか？", isPresented: $isConfirming, titleVisibility: .visible) {
+                Button("削除する", role: .destructive) {
+                    Task {
+                        errorMessage = await session.deleteAccount(password: password)
+                        if errorMessage == nil {
+                            dismiss()
+                        }
+                    }
+                }
+            }
+        }
+        .interactiveDismissDisabled(session.isProcessing)
     }
 }

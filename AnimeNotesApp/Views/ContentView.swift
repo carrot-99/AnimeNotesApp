@@ -1,21 +1,22 @@
 //  ContentView.swift
 
-import Foundation
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var userSessionViewModel: UserSessionViewModel
-    @AppStorage("isTermsAgreed") var isTermsAgreed = false
+    @EnvironmentObject private var session: UserSessionViewModel
+    @AppStorage("isTermsAgreed") private var isTermsAgreed = false
 
     var body: some View {
-        if !isTermsAgreed {
-            TermsAgreementView(isTermsAgreed: $isTermsAgreed)
-        } else {
-            if userSessionViewModel.isUserAuthenticated || userSessionViewModel.isUsingAppWithoutAccount {
+        Group {
+            if !isTermsAgreed {
+                TermsAgreementView(isTermsAgreed: $isTermsAgreed)
+            } else if session.isAuthenticated || session.isGuestMode {
                 MainTabView()
             } else {
                 LoginView()
             }
         }
+        .animation(.easeInOut, value: session.isAuthenticated)
+        .animation(.easeInOut, value: session.isGuestMode)
     }
 }

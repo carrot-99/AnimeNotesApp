@@ -1,48 +1,30 @@
 //  StatusAnimeListViewModel.swift
 
 import Foundation
-import Combine
-import FirebaseAuth
 
-class StatusAnimeListViewModel: BaseViewModel {
-    let status: Int
-    private var localCancellables = Set<AnyCancellable>()
+/// 視聴状況別の作品一覧
+@MainActor
+final class StatusAnimeListViewModel: AnimeCollectionViewModel {
+    let status: WatchStatus
 
-    init(
-        status: Int,
-        animeDataService: AnimeDataServiceProtocol = AnimeDataService(),
-        authenticationService: AuthenticationServiceProtocol = AuthenticationService()
-    ) {
+    init(status: WatchStatus, animeService: AnimeDataServiceProtocol = AnimeDataService()) {
         self.status = status
-        super.init(animeDataService: animeDataService)
-        fetchStatusAnimes(for: self.userId, with: status)
+        super.init(animeService: animeService)
     }
 
-    func fetchStatusAnimes(for userId: String, with status: Int) {
-        localCancellables.forEach { $0.cancel() }
-        localCancellables.removeAll()
-        
-        animeDataService.fetchStatusAnimes(userId: userId, status: status)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        print(error.localizedDescription)
-                    }
-                },
-                receiveValue: { [weak self] animes in
-                    self?.animes = animes
-                }
-            )
-            .store(in: &localCancellables)
+    func reload(userId: String?) async {
+        guard let userId else { return }
+        await load {
+            try await animeService.fetchHistory(userId: userId, status: status).sortedByTitle()
+        }
     }
-    
-    override func updateWatchingStatus(for animeId: Int, newStatus: Int) {
-        super.updateWatchingStatus(for: animeId, newStatus: newStatus)
-        fetchStatusAnimes(for: userId, with: status)
-    }
-    
-    override func selectAnimeForDetail(_ anime: UserAnime) {
-        super.selectAnimeForDetail(anime)
+
+    /// ステータスが変わった作品は一覧から外す
+    override func apply(_ anime: UserAnime) {
+        if anime.watchStatus == status {
+            super.apply(anime)
+        } else {
+            animes.removeAll { $0.id == anime.id }
+        }
     }
 }
