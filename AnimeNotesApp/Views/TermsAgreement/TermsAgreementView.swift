@@ -1,54 +1,81 @@
+//  TermsAgreementView.swift
+
 import SwiftUI
 
+/// 初回起動時の利用規約・プライバシーポリシーへの同意画面
 struct TermsAgreementView: View {
     @Binding var isTermsAgreed: Bool
-    @State private var localIsTermsAgreed: Bool = false
+    @State private var hasCheckedAgreement = false
 
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing: 24) {
                 Spacer()
 
-                // タイトルと説明文
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("利用規約とプライバシーポリシーを確認し、同意をお願いします。")
-                        .font(.headline)
-                        .padding(.bottom, 5)
-
-                    // 利用規約とプライバシーポリシーへのリンク
-                    HStack {
-                        NavigationLink(destination: TermsView()) {
-                            Text("利用規約")
-                                .foregroundColor(.blue)
-                        }
-
-                        Spacer()
-
-                        NavigationLink(destination: PrivacyPolicyView()) {
-                            Text("プライバシーポリシー")
-                                .foregroundColor(.blue)
-                        }
-                    }
+                VStack(spacing: 12) {
+                    Image(systemName: "play.tv.fill")
+                        .font(.system(size: 52))
+                        .foregroundColor(.accentColor)
+                    Text("アニメのーとへようこそ")
+                        .font(.title2.bold())
+                    Text("ご利用の前に、利用規約とプライバシーポリシーをご確認ください。")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
                 }
+
+                VStack(spacing: 0) {
+                    documentLink(title: "利用規約", systemImage: "doc.text") { TermsView() }
+                    Divider().padding(.leading, 48)
+                    documentLink(title: "プライバシーポリシー", systemImage: "hand.raised") { PrivacyPolicyView() }
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(Color(.secondarySystemGroupedBackground))
+                )
 
                 Spacer()
 
-                // 同意するトグル
-                Toggle("同意する", isOn: $localIsTermsAgreed)
-                    .toggleStyle(SwitchToggleStyle(tint: .blue))
-                    .padding(.vertical, 20)
+                Toggle("利用規約とプライバシーポリシーに同意する", isOn: $hasCheckedAgreement)
+                    .font(.subheadline)
 
-                // 次へボタン
-                Button("次へ") {
-                    isTermsAgreed = localIsTermsAgreed
+                Button("同意して始める") {
+                    isTermsAgreed = true
                 }
-                .disabled(!localIsTermsAgreed)
-                .padding(.bottom, 20)
+                .buttonStyle(PrimaryButtonStyle())
+                .disabled(!hasCheckedAgreement)
+            }
+            .padding(24)
+            .frame(maxWidth: 480)
+            .frame(maxWidth: .infinity)
+            .background(Color(.systemGroupedBackground).ignoresSafeArea())
+            .navigationBarHidden(true)
+        }
+        .navigationViewStyle(.stack)
+    }
+
+    private func documentLink<Destination: View>(
+        title: String,
+        systemImage: String,
+        @ViewBuilder destination: @escaping () -> Destination
+    ) -> some View {
+        NavigationLink {
+            destination()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: systemImage)
+                    .foregroundColor(.accentColor)
+                    .frame(width: 24)
+                Text(title)
+                    .foregroundColor(.primary)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption.bold())
+                    .foregroundColor(.secondary)
             }
             .padding()
+            .contentShape(Rectangle())
         }
-        .onAppear {
-            localIsTermsAgreed = isTermsAgreed
-        }
+        .buttonStyle(.plain)
     }
 }

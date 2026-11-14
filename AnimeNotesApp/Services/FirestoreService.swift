@@ -2,64 +2,54 @@
 
 import FirebaseFirestore
 import FirebaseFirestoreSwift
-import Combine
-import FirebaseAuth
 
-class FirestoreService: FirestoreServiceProtocol {
+enum FirestoreCollection {
+    static let animes = "animes"
+    static let users = "users"
+    static let watchingHistory = "userWatchingHistory"
+    static let episodesHistory = "episodesHistory"
+}
+
+/// Firestore アクセスの共通処理
+class FirestoreService {
+    /// Firestore の `in` クエリに渡せる値の上限
+    static let inQueryLimit = 30
+    /// 1 回のバッチ書き込みの上限（500）に余裕を持たせた値
+    static let batchLimit = 450
+
     let db: Firestore
-    
+
     init(database: Firestore = Firestore.firestore()) {
         self.db = database
     }
-    
-    func performQuery<T: Decodable>(_ query: Query, decodingType: T.Type) -> AnyPublisher<[T], Error> {
-        Future<[T], Error> { promise in
-            query.getDocuments { snapshot, error in
-                if let error = error {
-                    promise(.failure(error))
-                } else if let snapshot = snapshot {
-                    let results = snapshot.documents.compactMap { document -> T? in
-                        let data = document.data()
-                        return try? document.data(as: T.self)
-                    }
-                    promise(.success(results))
-                } else {
-                }
-            }
-        }
-        .eraseToAnyPublisher()
-    }
-    
-    func setData<T: Encodable>(_ documentReference: DocumentReference, for data: T) -> AnyPublisher<Void, Error> {
-        Future<Void, Error> { promise in
-            do {
-                let dataDict = try Firestore.Encoder().encode(data)
-                documentReference.setData(dataDict) { error in
-                    if let error = error {
-                        print("Error setting data: \(error.localizedDescription)")
-                        promise(.failure(error))
-                    } else {
-                        promise(.success(()))
-                    }
-                }
-            } catch {
-                print("Error encoding data: \(error.localizedDescription)")
-                promise(.failure(error))
-            }
-        }
-        .eraseToAnyPublisher()
+
+    func documents<T: Decodable>(_ query: Query, as type: T.Type) async throws -> [T] {
+        let snapshot = try await query.getDocuments()
+        return snapshot.documents.compactMap { try? $0.data(as: T.self) }
     }
 
-    func updateData(_ documentReference: DocumentReference, data: [String: Any]) -> AnyPublisher<Void, Error> {
-        Future<Void, Error> { promise in
-            documentReference.updateData(data) { error in
-                if let error = error {
-                    promise(.failure(error))
-                } else {
-                    promise(.success(()))
-                }
+    func set<T: Encodable>(_ value: T, at reference: DocumentReference, merge: Bool = false) async throws {
+        let data = try Firestore.Encoder().encode(value)
+        try await reference.setData(data, merge: merge)
+    }
+
+    /// 書き込み数の上限を超えないよう分割してバッチ処理する
+    func commitInBatches<Item>(_ items: [Item], apply: (WriteBatch, Item) throws -> Void) async throws {
+        for chunk in items.chunked(into: Self.batchLimit) {
+            let batch = db.batch()
+            for item in chunk {
+                try apply(batch, item)
             }
+            try await batch.commit()
         }
-        .eraseToAnyPublisher()
+    }
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        guard size > 0 else { return [self] }
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
     }
 }

@@ -1,60 +1,61 @@
 // SearchView.swift
 
 import SwiftUI
-import FirebaseAuth
 
 struct SearchView: View {
-    @ObservedObject private var searchVM = SearchViewModel()
-    @EnvironmentObject var userSessionViewModel: UserSessionViewModel
-    @State private var searchText = ""
+    @EnvironmentObject private var session: UserSessionViewModel
+    @StateObject private var viewModel = SearchViewModel()
 
     var body: some View {
         NavigationView {
-            VStack {
-                SearchBarView(searchText: $searchText, onSearch: {
-                    if userSessionViewModel.isUserAuthenticated {
-                        searchVM.searchAnimeByTitleForAuthenticatedUser(title: searchText)
-                    } else {
-                        searchVM.searchAnimeByTitleForUnauthenticatedUser(title: searchText)
-                    }
-                })
-                
-                if searchVM.isLoading {
-                    ProgressView("検索中...")
-                        .progressViewStyle(CircularProgressViewStyle())
-                } else {
-                    SearchResultsView(searchVM: searchVM)
-                }
+            AnimeCollectionList(
+                animes: viewModel.animes,
+                isLoading: viewModel.isLoading,
+                onStatusChange: { anime, status in
+                    Task { await viewModel.setStatus(status, for: anime) }
+                },
+                onAnimeUpdate: viewModel.apply
+            ) {
+                emptyState
             }
             .navigationTitle("検索")
-            .background(
-                NavigationLink(
-                    destination: searchVM.isAnimeSelected ? AnimeDetailView(
-                        anime: searchVM.selectedAnime!,
-                        ViewModel: AnimeDetailViewModel(
-                            anime: searchVM.selectedAnime!,
-                            episodeDataService: EpisodeDataService()
-                        )
-                    ) : nil,
-                    isActive: $searchVM.isAnimeSelected
-                ) {
-                    EmptyView()
-                }
+            .searchable(
+                text: $viewModel.query,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "作品タイトル（日本語）"
+            )
+            .onSubmit(of: .search) {
+                Task { await viewModel.search(userId: session.userId) }
+            }
+            // 入力が止まったら自動で検索する
+            .task(id: viewModel.query) {
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                guard !Task.isCancelled else { return }
+                await viewModel.search(userId: session.userId)
+            }
+            .onChange(of: session.userId) { _ in
+                viewModel.reset()
+                Task { await viewModel.search(userId: session.userId) }
+            }
+            .errorAlert($viewModel.errorMessage)
+        }
+        .navigationViewStyle(.stack)
+    }
+
+    @ViewBuilder
+    private var emptyState: some View {
+        if let keyword = viewModel.searchedKeyword {
+            EmptyStateView(
+                systemImage: "magnifyingglass",
+                title: "「\(keyword)」に一致する作品は見つかりませんでした",
+                message: "タイトルの先頭から入力してください。ひらがな・カタカナ・漢字の違いも区別されます。"
+            )
+        } else {
+            EmptyStateView(
+                systemImage: "text.magnifyingglass",
+                title: "作品を検索",
+                message: "日本語タイトルの先頭一致で検索します。\n例: 「進撃」「ぼっち」"
             )
         }
-        .sheet(isPresented: $searchVM.showingStatusSelection) {
-            if let selectedAnime = searchVM.selectedAnimeForStatusUpdate {
-                StatusSelectionModalView(
-                    selectedStatus: $searchVM.selectedStatus,
-                    isPresented: $searchVM.showingStatusSelection,
-                    updateStatus: { newStatus in
-                        searchVM.updateWatchingStatus(for: selectedAnime.anime_id, newStatus: newStatus)
-                    }
-                )
-            } else {
-                Text("情報を読み込めませんでした。")
-            }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

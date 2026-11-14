@@ -2,8 +2,9 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseFirestoreSwift
 
-// MARK: - animes構造体
+/// `animes` コレクションのドキュメント（AniList から取り込まれた作品情報）
 struct Anime: Codable, Identifiable {
     @DocumentID var id: String?
     var title: Title
@@ -15,24 +16,9 @@ struct Anime: Codable, Identifiable {
     struct Title: Codable {
         var native: String
     }
-}
 
-extension Anime {
-    var seasonLocalized: String {
-        guard let season = self.season?.uppercased() else { return "--" }
-        let seasonKey: String
-        switch season {
-        case "SPRING":
-            seasonKey = "season_spring"
-        case "SUMMER":
-            seasonKey = "season_summer"
-        case "FALL":
-            seasonKey = "season_fall"
-        case "WINTER":
-            seasonKey = "season_winter"
-        default:
-            return "--"
-        }
-        return NSLocalizedString(seasonKey, comment: "")
+    /// AniList の作品 ID（ドキュメント ID を数値化したもの）
+    var animeId: Int? {
+        id.flatMap(Int.init)
     }
 }

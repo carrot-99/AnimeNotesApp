@@ -3,65 +3,104 @@
 import SwiftUI
 
 struct CreateAccountView: View {
+    private enum Field { case email, password, confirmation }
+
+    @EnvironmentObject private var session: UserSessionViewModel
+    @Environment(\.dismiss) private var dismiss
     @State private var email = ""
     @State private var password = ""
-    @State private var confirmPassword = ""
-    @EnvironmentObject var userSessionViewModel: UserSessionViewModel
-    @State private var showingAlert = false
-    @State private var alertMessage = ""
+    @State private var confirmation = ""
+    @State private var errorMessage: String?
+    @FocusState private var focusedField: Field?
 
-    var body: some View {
-        VStack(spacing: 16) {
-            CustomTextField(placeholder: "メールアドレス(user@example.com)", text: $email)
-            CustomTextField(placeholder: "パスワード(英字と数字を含む8文字以上)", text: $password, isSecure: true)
-            CustomTextField(placeholder: "パスワード確認", text: $confirmPassword, isSecure: true)
-            Text("アカウント作成時、登録されたアドレスに認証メールが送信されます。")
-            Text("※誤ったアドレスで登録してしまうと、一部機能が制限される場合があります。")
-                .foregroundColor(.red)
+    private var trimmedEmail: String { email.trimmingCharacters(in: .whitespaces) }
+    private var passwordsMatch: Bool { !confirmation.isEmpty && password == confirmation }
 
-            if let errorMessage = userSessionViewModel.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .padding()
-            }
-
-            if userSessionViewModel.isLoading {
-                ProgressView()
-            } else {
-                Button("アカウント作成") {
-                    if validateInputs() {
-                        userSessionViewModel.createAccount(email: email, password: password)
-                    } else {
-                        showingAlert = true
-                    }
-                }
-                .primaryButtonStyle()
-                .alert(isPresented: $showingAlert) {
-                    Alert(title: Text("エラー"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-                }
-            }
-        }
-        .padding()
-        .navigationTitle("アカウント作成")
-        .dismissKeyboardOnTap()
+    private var canSubmit: Bool {
+        Validation.isValidEmail(trimmedEmail) && Validation.isValidPassword(password) && passwordsMatch
     }
 
-    private func validateInputs() -> Bool {
-        if !Validation.isValidEmail(email) {
-            alertMessage = "無効なメールアドレスです。"
-            return false
-        }
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    FormTextField(title: "メールアドレス", text: $email, kind: .email) {
+                        focusedField = .password
+                    }
+                    .focused($focusedField, equals: .email)
 
-        if !Validation.isValidPassword(password) {
-            alertMessage = "パスワードは8文字以上であり、英字と数字を含む必要があります。"
-            return false
-        }
+                    if !email.isEmpty && !Validation.isValidEmail(trimmedEmail) {
+                        InlineMessage(text: "メールアドレスの形式が正しくありません")
+                    }
 
-        if !Validation.passwordsMatch(password, confirmPassword) {
-            alertMessage = "パスワードが一致しません。"
-            return false
-        }
+                    FormTextField(title: "パスワード", text: $password, kind: .password(isNew: true)) {
+                        focusedField = .confirmation
+                    }
+                    .focused($focusedField, equals: .password)
 
-        return true
+                    FormTextField(title: "パスワード（確認）", text: $confirmation, kind: .password(isNew: true), submitLabel: .done) {
+                        submit()
+                    }
+                    .focused($focusedField, equals: .confirmation)
+
+                    requirements
+
+                    Label("登録したアドレスに認証メールが届きます。誤ったアドレスで登録すると、パスワードの再設定などができなくなります。", systemImage: "info.circle")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+
+                    if let errorMessage {
+                        InlineMessage(text: errorMessage)
+                    }
+
+                    PrimaryButton(title: "アカウントを作成", isLoading: session.isProcessing, action: submit)
+                        .disabled(!canSubmit)
+                }
+                .padding(24)
+            }
+            .background(Color(.systemGroupedBackground).ignoresSafeArea())
+            .dismissKeyboardOnTap()
+            .navigationTitle("アカウント作成")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("閉じる") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private var requirements: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(Validation.passwordRequirements(password)) { requirement in
+                RequirementRow(label: requirement.label, isSatisfied: requirement.isSatisfied)
+            }
+            RequirementRow(label: "確認用パスワードが一致", isSatisfied: passwordsMatch)
+        }
+        .padding(.horizontal, 4)
+    }
+
+    private func submit() {
+        guard canSubmit, !session.isProcessing else { return }
+        focusedField = nil
+        Task {
+            // 成功するとログイン状態になり、画面が自動的に切り替わる
+            errorMessage = await session.createAccount(email: trimmedEmail, password: password)
+            if errorMessage == nil {
+                dismiss()
+            }
+        }
+    }
+}
+
+private struct RequirementRow: View {
+    let label: String
+    let isSatisfied: Bool
+
+    var body: some View {
+        Label(label, systemImage: isSatisfied ? "checkmark.circle.fill" : "circle")
+            .font(.footnote)
+            .foregroundColor(isSatisfied ? .green : .secondary)
+            .animation(.easeInOut(duration: 0.15), value: isSatisfied)
     }
 }

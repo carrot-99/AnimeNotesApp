@@ -2,37 +2,38 @@
 
 import SwiftUI
 
-struct FlatTextField: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding(EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20))
-            .background(Color(UIColor.secondarySystemBackground))
-            .cornerRadius(10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color(UIColor.separator), lineWidth: 0.5)
-            )
-    }
-}
-
 extension View {
-    func flatTextFieldStyle() -> some View {
-        self.modifier(FlatTextField())
+    /// メッセージが設定されたらアラートで表示し、閉じたら nil に戻す
+    func errorAlert(_ message: Binding<String?>, title: String = "エラー") -> some View {
+        alert(
+            title,
+            isPresented: Binding(
+                get: { message.wrappedValue != nil },
+                set: { if !$0 { message.wrappedValue = nil } }
+            ),
+            actions: { Button("OK", role: .cancel) {} },
+            message: { Text(message.wrappedValue ?? "") }
+        )
     }
 }
 
-// SecureTextField ViewModifier
-struct SecureTextField: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .textContentType(.oneTimeCode)
-            .autocapitalization(.none)
-    }
-}
+/// フォーム内のエラー・完了メッセージ
+struct InlineMessage: View {
+    enum Style {
+        case error, success
 
-// SecureTextFieldの拡張
-extension View {
-    func secureTextFieldStyle() -> some View {
-        self.modifier(SecureTextField())
+        var color: Color { self == .error ? .red : .green }
+        var systemImage: String { self == .error ? "exclamationmark.triangle.fill" : "checkmark.circle.fill" }
+    }
+
+    let text: String
+    var style: Style = .error
+
+    var body: some View {
+        Label(text, systemImage: style.systemImage)
+            .font(.footnote)
+            .foregroundColor(style.color)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .transition(.opacity)
     }
 }

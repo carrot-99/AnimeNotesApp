@@ -1,98 +1,39 @@
 //  HomeViewModel.swift
 
 import Foundation
-import Combine
-import FirebaseAuth
 
-class HomeViewModel: ObservableObject {
-    @Published var watchedAnimeCount = 0
-    @Published var watchingAnimeCount = 0
-    @Published var onHoldAnimeCount = 0
-    @Published var plannedAnimeCount = 0
-    
-    private var authService: AuthenticationService
-    private var cancellables = Set<AnyCancellable>()
-    private var statusViewModels: [Int: StatusAnimeListViewModel] = [:]
-    
-    init(authService: AuthenticationService) {
-        self.authService = authService
-        refreshStatusCounts()
-    }
-    
-    var userId: String {
-        return authService.currentUserId
+@MainActor
+final class HomeViewModel: ObservableObject {
+    @Published private(set) var counts: [WatchStatus: Int] = [:]
+    @Published private(set) var isLoading = false
+    @Published var errorMessage: String?
+
+    private let animeService: AnimeDataServiceProtocol
+
+    init(animeService: AnimeDataServiceProtocol = AnimeDataService()) {
+        self.animeService = animeService
     }
 
-    func refreshStatusCounts() {
-        fetchStatusCounts(userId: userId)
+    func count(for status: WatchStatus) -> Int? {
+        counts[status]
     }
-    
-    private func fetchStatusCounts(userId: String) {
-        AnimeDataService().fetchStatusCounts(userId: userId)
-            .receive(on: RunLoop.main)
-            .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        print(error.localizedDescription)
-                    }
-                },
-                receiveValue: { [weak self] statusCounts in
-                    self?.watchedAnimeCount = statusCounts.watched
-                    self?.watchingAnimeCount = statusCounts.watching
-                    self?.onHoldAnimeCount = statusCounts.onHold
-                    self?.plannedAnimeCount = statusCounts.planned
-                }
-            )
-            .store(in: &cancellables)
+
+    var totalCount: Int {
+        counts.values.reduce(0, +)
     }
-    
-    func count(for status: UserAnimeStatus) -> Int {
-        switch status {
-        case .watched:
-            return watchedAnimeCount
-        case .watching:
-            return watchingAnimeCount
-        case .onHold:
-            return onHoldAnimeCount
-        case .planned:
-            return plannedAnimeCount
+
+    func reload(userId: String?) async {
+        guard let userId else {
+            counts = [:]
+            return
         }
-    }
-    
-    func getOrCreateStatusViewModel(for status: Int) -> StatusAnimeListViewModel {
-        if let viewModel = statusViewModels[status] {
-            return viewModel
-        } else {
-            let newViewModel = StatusAnimeListViewModel(status: status, animeDataService: AnimeDataService(), authenticationService: AuthenticationService())
-            statusViewModels[status] = newViewModel
-            return newViewModel
-        }
-    }
-}
-
-struct StatusCounts {
-    var watched: Int
-    var watching: Int
-    var onHold: Int
-    var planned: Int
-}
-
-enum UserAnimeStatus: Int, CaseIterable {
-    case watched = 3
-    case watching = 1
-    case onHold = 2
-    case planned = 4
-    
-    var description: String {
-        switch self {
-        case .watched:
-            return "視聴済作品"
-        case .watching:
-            return "視聴中作品"
-        case .onHold:
-            return "視聴中断作品"
-        case .planned:
-            return "視聴予定作品"
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            counts = try await animeService.fetchStatusCounts(userId: userId)
+        } catch is CancellationError {
+        } catch {
+            errorMessage = error.userMessage
         }
     }
 }

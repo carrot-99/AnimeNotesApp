@@ -1,9 +1,10 @@
 //  EpisodeDataServiceProtocol.swift
 
-import Combine
+import Foundation
 
 protocol EpisodeDataServiceProtocol {
-    func fetchEpisodes(for userId: String, animeId: Int) -> AnyPublisher<[UserEpisode], Error>
-    func createEpisodesIfNotExist(for userId: String, animeId: Int, episodesCount: Int) -> AnyPublisher<Void, Error>
-    func updateEpisodeStatus(userId: String, animeId: Int, episodeNum: Int, newStatus: Int) -> AnyPublisher<Void, Error>
+    /// 保存済みのエピソード視聴履歴（記録のないエピソードは含まれない）
+    func fetchEpisodes(userId: String, animeId: Int) async throws -> [UserEpisode]
+    /// エピソードの視聴状況を保存する（ドキュメントがなければ作成する）
+    func save(_ episodes: [UserEpisode]) async throws
 }

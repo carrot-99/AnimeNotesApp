@@ -1,112 +1,160 @@
 //  AnimeDetailViewModel.swift
 
 import Foundation
-import FirebaseFirestore
-import Combine
 
-class AnimeDetailViewModel: ObservableObject {
-    @Published var episodes: [UserEpisode] = []
-    @Published var isLoading = false
-    @Published var showingStatusSelection = false
-    @Published var selectedStatus: Int = 0
-    @Published var statusUpdated = false
-    private var selectedEpisode: UserEpisode?
-    private var cancellables = Set<AnyCancellable>()
-    private let episodeDataService: EpisodeDataServiceProtocol
+@MainActor
+final class AnimeDetailViewModel: ObservableObject {
+    @Published private(set) var anime: UserAnime
+    @Published private(set) var episodes: [UserEpisode] = []
+    @Published private(set) var isLoading = false
+    @Published var errorMessage: String?
 
-    
-    init(anime: UserAnime, episodeDataService: EpisodeDataServiceProtocol) {
-        self.episodeDataService = episodeDataService
-        fetchEpisodes(for: anime)
+    /// 作品の視聴状況が変わったときに呼ばれる（一覧画面への反映用）
+    private let onAnimeChange: (UserAnime) -> Void
+    private let animeService: AnimeDataServiceProtocol
+    private let episodeService: EpisodeDataServiceProtocol
+    private var hasLoaded = false
+    /// 作品の視聴履歴ドキュメントが Firestore に存在するか
+    private var isHistorySaved: Bool
+
+    init(
+        anime: UserAnime,
+        animeService: AnimeDataServiceProtocol = AnimeDataService(),
+        episodeService: EpisodeDataServiceProtocol = EpisodeDataService(),
+        onAnimeChange: @escaping (UserAnime) -> Void = { _ in }
+    ) {
+        self.anime = anime
+        self.animeService = animeService
+        self.episodeService = episodeService
+        self.onAnimeChange = onAnimeChange
+        // 未視聴以外の作品は視聴履歴から読み込まれたもの
+        self.isHistorySaved = anime.watchStatus != .notWatched
     }
 
-    func fetchEpisodes(for anime: UserAnime) {
+    var watchedCount: Int {
+        episodes.filter { $0.watchStatus == .watched }.count
+    }
+
+    var progress: Double {
+        episodes.isEmpty ? 0 : Double(watchedCount) / Double(episodes.count)
+    }
+
+    var hasEpisodeInfo: Bool {
+        (anime.episodes ?? 0) > 0
+    }
+
+    // MARK: - 読み込み
+
+    func loadIfNeeded() async {
+        guard !hasLoaded else { return }
+        await reload()
+    }
+
+    /// 話数分のエピソードを並べ、記録済みのものは保存された状況を反映する
+    func reload() async {
+        guard let count = anime.episodes, count > 0 else { return }
         isLoading = true
-        
-        episodeDataService.fetchEpisodes(for: anime.user_id, animeId: anime.anime_id)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    self?.isLoading = false
-                    if case let .failure(error) = completion {
-                        print("Error fetching episodes: \(error.localizedDescription)")
-                    }
-                },
-                receiveValue: { [weak self] episodes in
-                    if !episodes.isEmpty {
-                        self?.episodes = episodes.sorted(by: { $0.episode_num < $1.episode_num })
-                    } else {
-                        self?.createEpisodesIfNotExist(for: anime)
-                    }
-                }
-            )
-            .store(in: &cancellables)
-    }
-    
-    private func createEpisodesIfNotExist(for anime: UserAnime) {
-        guard let episodesCount = anime.episodes, episodesCount > 0 else {
-            return
+        defer { isLoading = false }
+        do {
+            let saved = try await episodeService.fetchEpisodes(userId: anime.user_id, animeId: anime.anime_id)
+            let savedByNumber = Dictionary(saved.map { ($0.episode_num, $0) }, uniquingKeysWith: { first, _ in first })
+            episodes = (1...count).map { number in
+                savedByNumber[number]
+                    ?? UserEpisode(userId: anime.user_id, animeId: anime.anime_id, episodeNumber: number)
+            }
+            hasLoaded = true
+        } catch is CancellationError {
+        } catch {
+            errorMessage = error.userMessage
         }
-        
-        episodeDataService.createEpisodesIfNotExist(for: anime.user_id, animeId: anime.anime_id, episodesCount: episodesCount)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { completion in
-                    if case .failure(_) = completion {
-                    }
-                },
-                receiveValue: { [weak self] _ in
-                    self?.fetchEpisodes(for: anime)
-                }
-            )
-            .store(in: &cancellables)
     }
-    
-    func selectEpisode(_ episode: UserEpisode) {
-        self.selectedEpisode = episode
-        self.showingStatusSelection = true
-        self.selectedStatus = episode.status
-    }
-    
-    func updateStatusForSelectedEpisode() {
-        guard let selectedEpisode = selectedEpisode else { return }
-        episodeDataService.updateEpisodeStatus(userId: selectedEpisode.user_id, animeId: selectedEpisode.anime_id, episodeNum: selectedEpisode.episode_num, newStatus: selectedStatus)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    if case .failure(_) = completion {
-                        self?.statusUpdated = false
-                    }
-                },
-                receiveValue: { [weak self] _ in
-                    self?.selectedStatus = self?.selectedEpisode?.status ?? 0
-                    if let index = self?.episodes.firstIndex(where: { $0.episode_num == selectedEpisode.episode_num }) {
-                        self?.episodes[index].status = self?.selectedStatus ?? 0
-                        self?.statusUpdated = true
-                    }
-                    self?.showingStatusSelection = false
-                }
-            )
-            .store(in: &cancellables)
-    }
-    
-    func seasonTranslate(season: String) -> String {
-        var translatedSeason: String
-        
-        switch season {
-        case "SPRING":
-            translatedSeason = "春"
-        case "SUMMER":
-            translatedSeason = "夏"
-        case "FALL":
-            translatedSeason = "秋"
-        case "WINTER":
-            translatedSeason = "冬"
-        default:
-            translatedSeason = season
+
+    // MARK: - 作品の視聴状況
+
+    func setAnimeStatus(_ status: WatchStatus) async {
+        guard status != anime.watchStatus else { return }
+        let previous = anime
+        anime.watchStatus = status
+        Haptics.selection()
+        do {
+            try await animeService.save(anime)
+            isHistorySaved = true
+            onAnimeChange(anime)
+        } catch {
+            anime = previous
+            errorMessage = error.userMessage
         }
-        
-        return translatedSeason
+    }
+
+    // MARK: - エピソードの視聴状況
+
+    /// タップ時: 視聴済 ⇔ 未視聴 を切り替える
+    func toggle(_ episode: UserEpisode) async {
+        await setStatus(episode.watchStatus == .watched ? .notWatched : .watched, for: [episode])
+    }
+
+    func setStatus(_ status: WatchStatus, for episode: UserEpisode) async {
+        await setStatus(status, for: [episode])
+    }
+
+    func markAll(_ status: WatchStatus) async {
+        await setStatus(status, for: episodes)
+        if status == .watched {
+            Haptics.success()
+        }
+    }
+
+    private func setStatus(_ status: WatchStatus, for targets: [UserEpisode]) async {
+        let changed = targets
+            .filter { $0.watchStatus != status }
+            .map { episode -> UserEpisode in
+                var updated = episode
+                updated.watchStatus = status
+                return updated
+            }
+        guard !changed.isEmpty else { return }
+
+        let snapshot = episodes
+        for episode in changed {
+            if let index = episodes.firstIndex(where: { $0.id == episode.id }) {
+                episodes[index] = episode
+            }
+        }
+        if changed.count == 1 {
+            Haptics.selection()
+        }
+
+        do {
+            // 作品の視聴履歴ドキュメントがないとアカウント削除時にエピソード履歴を辿れないため、先に作成しておく
+            if !isHistorySaved {
+                try await animeService.save(anime)
+                isHistorySaved = true
+            }
+            try await episodeService.save(changed)
+            await syncAnimeStatus(afterMarking: status)
+        } catch {
+            episodes = snapshot
+            errorMessage = error.userMessage
+        }
+    }
+
+    /// エピソードの進み具合に合わせて作品の視聴状況を自動更新する
+    private func syncAnimeStatus(afterMarking status: WatchStatus) async {
+        guard !episodes.isEmpty else { return }
+        let target: WatchStatus?
+        if watchedCount == episodes.count {
+            target = .watched
+        } else if status == .watched, [.notWatched, .planned].contains(anime.watchStatus) {
+            // 見始めたら「視聴中」へ
+            target = .watching
+        } else if status != .watched, anime.watchStatus == .watched {
+            // 視聴済の作品で未視聴の話が出たら「視聴中」へ戻す
+            target = .watching
+        } else {
+            target = nil
+        }
+        if let target {
+            await setAnimeStatus(target)
+        }
     }
 }
-

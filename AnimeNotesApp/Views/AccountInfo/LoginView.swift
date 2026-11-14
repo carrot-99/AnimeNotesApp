@@ -1,86 +1,120 @@
 //  LoginView.swift
 
 import SwiftUI
-import FirebaseAuth
 
 struct LoginView: View {
+    private enum Field { case email, password }
+
+    @EnvironmentObject private var session: UserSessionViewModel
     @State private var email = ""
     @State private var password = ""
-    @State private var alertMessage = ""
-    @State private var showingAlert = false
-    @State private var navigateToCreateAccount = false
-    @State private var showingPasswordResetModal = false
-    @EnvironmentObject var userSessionViewModel: UserSessionViewModel
-    
-    var body: some View {
-        NavigationView {
-            VStack(spacing: 16) {
-                CustomTextField(placeholder: "メールアドレス", text: $email)
-                CustomTextField(placeholder: "パスワード", text: $password, isSecure: true)
-                
-                if let errorMessage = userSessionViewModel.errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .padding()
-                }
-                
-                if userSessionViewModel.isLoading {
-                    ProgressView()
-                } else {
-                    Button("ログイン") {
-                        if validateLoginInputs() {
-                            userSessionViewModel.signIn(email: email, password: password)
-                        } else {
-                            showingAlert = true
-                        }
-                    }
-                    .primaryButtonStyle()
-                    .alert(isPresented: $showingAlert) {
-                        Alert(title: Text("エラー"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-                    }
-                }
-                Button("パスワードを忘れた場合") {
-                    showingPasswordResetModal = true
-                }
-                .foregroundColor(.blue)
-                Button("新規アカウント作成") {
-                    navigateToCreateAccount = true
-                    userSessionViewModel.clearErrorMessage()
-                }
-                .foregroundColor(.blue)
+    @State private var errorMessage: String?
+    @State private var isShowingCreateAccount = false
+    @State private var isShowingPasswordReset = false
+    @FocusState private var focusedField: Field?
 
-                Button("アカウントを作成せずに利用する") {
-                    userSessionViewModel.isUsingAppWithoutAccount = true
-//                    userSessionViewModel.isEmailVerified = true
-                }
-                .foregroundColor(.blue)
-            }
-            .padding()
-            .navigationTitle("ログイン")
-            .dismissKeyboardOnTap()
-            .sheet(isPresented: $navigateToCreateAccount) {
-                CreateAccountView()
-                    .environmentObject(userSessionViewModel)
-            }
-            .sheet(isPresented: $showingPasswordResetModal) {
-                PasswordResetModalView(isPresented: $showingPasswordResetModal)
-                    .environmentObject(userSessionViewModel) 
-            }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
+    private var canSubmit: Bool {
+        Validation.isValidEmail(email) && !password.isEmpty
     }
-    
-    private func validateLoginInputs() -> Bool {
-        if !Validation.isValidEmail(email) {
-            alertMessage = "無効なメールアドレスです。"
-            return false
-        }
 
-        if !Validation.isValidPassword(password) {
-            alertMessage = "パスワードは8文字以上であり、英字と数字を含む必要があります。"
-            return false
-        }
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 28) {
+                header
 
-        return true
+                VStack(spacing: 12) {
+                    FormTextField(title: "メールアドレス", text: $email, kind: .email) {
+                        focusedField = .password
+                    }
+                    .focused($focusedField, equals: .email)
+
+                    FormTextField(title: "パスワード", text: $password, kind: .password(isNew: false), submitLabel: .go) {
+                        submit()
+                    }
+                    .focused($focusedField, equals: .password)
+
+                    if let errorMessage {
+                        InlineMessage(text: errorMessage)
+                    }
+
+                    PrimaryButton(title: "ログイン", isLoading: session.isProcessing, action: submit)
+                        .disabled(!canSubmit)
+                        .padding(.top, 4)
+
+                    Button("パスワードをお忘れの方") {
+                        isShowingPasswordReset = true
+                    }
+                    .font(.footnote)
+                    .padding(.top, 4)
+                }
+
+                VStack(spacing: 12) {
+                    divider
+
+                    Button {
+                        errorMessage = nil
+                        isShowingCreateAccount = true
+                    } label: {
+                        Text("新規アカウント作成")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                    }
+                    .buttonStyle(.bordered)
+
+                    Button("アカウントを作成せずに利用する") {
+                        session.enterGuestMode()
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 4)
+                }
+            }
+            .padding(24)
+            .frame(maxWidth: 480)
+            .frame(maxWidth: .infinity)
+        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .dismissKeyboardOnTap()
+        .sheet(isPresented: $isShowingCreateAccount) {
+            CreateAccountView()
+        }
+        .sheet(isPresented: $isShowingPasswordReset) {
+            PasswordResetModalView(initialEmail: email)
+        }
+    }
+
+    private var header: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "play.tv.fill")
+                .font(.system(size: 52))
+                .foregroundColor(.accentColor)
+                .padding(.top, 40)
+            Text("アニメのーと")
+                .font(.largeTitle.bold())
+            Text("観たアニメを、話数ごとに記録しよう")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private var divider: some View {
+        HStack {
+            VStack { Divider() }
+            Text("または")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            VStack { Divider() }
+        }
+    }
+
+    private func submit() {
+        guard canSubmit, !session.isProcessing else { return }
+        focusedField = nil
+        Task {
+            errorMessage = await session.signIn(
+                email: email.trimmingCharacters(in: .whitespaces),
+                password: password
+            )
+        }
     }
 }

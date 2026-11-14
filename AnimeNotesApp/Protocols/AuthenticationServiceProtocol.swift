@@ -1,17 +1,25 @@
 // AuthenticationServiceProtocol.swift
 
-import Combine
-import FirebaseAuth
+import Foundation
 
 protocol AuthenticationServiceProtocol {
-    func createAccount(email: String, password: String) -> AnyPublisher<User, Error>
-    func signIn(email: String, password: String) -> AnyPublisher<User, Error>
-    func signOut() -> AnyPublisher<Void, Error>
-    var currentUserId: String { get }
-    func updateUserInfo(userId: String, userData: [String: Any]) -> AnyPublisher<Void, Error>
-    func fetchUserInfo(userId: String) -> AnyPublisher<UserModel, Error>
+    /// 現在ログイン中のユーザー（ユーザー名は含まない）
     var currentUser: UserModel? { get }
-    func resetPassword(email: String) -> AnyPublisher<Void, Error>
-    func deleteUser() -> AnyPublisher<Void, Error> 
-    func reauthenticate(email: String, password: String) -> AnyPublisher<Void, Error>
+
+    /// ログイン状態の変化を監視する。戻り値を破棄すると監視を終了する。
+    func observeAuthState(_ handler: @escaping (UserModel?) -> Void) -> AnyObject
+
+    func createAccount(email: String, password: String) async throws
+    func signIn(email: String, password: String) async throws
+    func signOut() throws
+    func sendPasswordReset(email: String) async throws
+    func sendEmailVerification() async throws
+    /// サーバーから最新のユーザー情報（メール認証状態など）を取得する
+    func reloadCurrentUser() async throws -> UserModel?
+
+    func fetchUsername(userId: String) async throws -> String?
+    func updateUsername(_ username: String, userId: String) async throws
+
+    /// 再認証したうえで、視聴履歴などのデータとアカウントを削除する
+    func deleteAccount(password: String) async throws
 }
